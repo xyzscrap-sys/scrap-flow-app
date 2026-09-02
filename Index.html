@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scrap Management Portal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen p-4 md:p-8">
+  <div class="max-w-4xl mx-auto bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700">
+    <div class="flex justify-between items-center border-b border-slate-700 pb-4 mb-6">
+      <h1 class="text-2xl font-bold text-amber-400">Scrap Flow Management</h1>
+      <span class="bg-emerald-500/20 text-emerald-400 text-xs px-3 py-1 rounded-full border border-emerald-500/30">Live Cloud Connected</span>
+    </div>
+
+    <form id="scrapForm" class="space-y-4">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-xs font-semibold mb-1 text-slate-400">MR Number</label>
+          <input type="text" id="mr_no" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm focus:border-amber-400 outline-none" placeholder="MR-1001" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold mb-1 text-slate-400">Party Name</label>
+          <input type="text" id="party_name" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm focus:border-amber-400 outline-none" placeholder="Party Name" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold mb-1 text-slate-400">Vehicle No.</label>
+          <input type="text" id="veh_no" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm focus:border-amber-400 outline-none" placeholder="MP 09 AB 1234" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-xs font-semibold mb-1 text-slate-400">Firm Name</label>
+          <select id="firm" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm focus:border-amber-400 outline-none">
+            <option value="Expert Enterprises">Expert Enterprises</option>
+            <option value="Eshaan Enterprises">Eshaan Enterprises</option>
+            <option value="EE">EE</option>
+            <option value="ESS">ESS</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold mb-1 text-slate-400">Party Weight (Kg)</label>
+          <input type="number" id="party_wt" step="any" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm focus:border-amber-400 outline-none" placeholder="0" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold mb-1 text-slate-400">Base Rate (₹)</label>
+          <input type="number" id="base_rate" step="any" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm focus:border-amber-400 outline-none" placeholder="0" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-semibold mb-1 text-slate-400">Dust Weight (Kg)</label>
+          <input type="number" id="dust_wt" step="any" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm focus:border-amber-400 outline-none" placeholder="0" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold mb-1 text-slate-400">Gross Bill Value (₹)</label>
+          <input type="number" id="gross_bill_val" step="any" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm focus:border-amber-400 outline-none" placeholder="0" />
+        </div>
+      </div>
+
+      <button type="submit" id="btnSubmit" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3 rounded-lg mt-4 transition">
+        Save Entry to Cloud Database
+      </button>
+      <p id="msg" class="text-center text-sm font-semibold hidden"></p>
+    </form>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://ovqsxqpqhxbicfbdrcaj.supabase.co";
+    const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92cXN4cXBxaHhiaWNmYmRyY2FqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEyNDk3MzMsImV4cCI6MjA1Njg0OTczM30.OnfnOVxQFz5nRxqUGd2YHrmS2SSx4MbHSgK8GjYSzDo";
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+    const form = document.getElementById('scrapForm');
+    const msg = document.getElementById('msg');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('btnSubmit');
+      btn.disabled = true;
+      btn.innerText = "Saving...";
+
+      const data = {
+        mr_no: document.getElementById('mr_no').value,
+        party_name: document.getElementById('party_name').value,
+        veh_no: document.getElementById('veh_no').value,
+        firm: document.getElementById('firm').value,
+        party_wt: parseFloat(document.getElementById('party_wt').value) || 0,
+        base_rate: parseFloat(document.getElementById('base_rate').value) || 0,
+        dust_wt: parseFloat(document.getElementById('dust_wt').value) || 0,
+        gross_bill_val: parseFloat(document.getElementById('gross_bill_val').value) || 0,
+      };
+
+      const { error } = await supabase.from('scrap_master').insert([data]);
+
+      if (error) {
+        msg.className = "text-center text-sm font-semibold text-rose-400 mt-2 block";
+        msg.innerText = "Error: " + error.message;
+      } else {
+        msg.className = "text-center text-sm font-semibold text-emerald-400 mt-2 block";
+        msg.innerText = "Entry successfully saved to Supabase!";
+        form.reset();
+      }
+      btn.disabled = false;
+      btn.innerText = "Save Entry to Cloud Database";
+    });
+  </script>
+</body>
+</html>
