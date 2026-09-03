@@ -3,122 +3,109 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Advanced Scrap Flow Management</title>
+  <title>Scrap Inward Billing Slip</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen p-3 md:p-6 font-sans">
-  <div class="max-w-6xl mx-auto bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-4 md:p-8 space-y-6">
+<body class="bg-slate-900 min-h-screen p-2 sm:p-4 flex items-center justify-center font-sans">
+
+  <div class="w-full max-w-xl bg-sky-200 border-2 border-sky-600 rounded-lg shadow-2xl overflow-hidden text-slate-900 text-sm">
     
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-800 pb-4 gap-2">
-      <div>
-        <h1 class="text-2xl md:text-3xl font-bold text-amber-400">Scrap Master Management</h1>
-        <p class="text-xs text-slate-400">Multi-grade Scrap Inward, Calculations & DR/CR Generator</p>
+    <!-- Top Header: MR, Date, Name, Veh -->
+    <div class="bg-sky-400 border-b-2 border-sky-600 p-2 grid grid-cols-2 gap-2 font-semibold">
+      <div class="flex items-center gap-1">
+        <span class="w-16">MR No. :-</span>
+        <input type="text" id="mr_no" value="231" class="w-full bg-white border border-sky-700 px-2 py-0.5 rounded text-xs font-bold outline-none" />
       </div>
-      <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-xs px-3 py-1.5 rounded-full font-medium">
-        ● Live Cloud Connected
-      </span>
+      <div class="flex items-center gap-1">
+        <span class="w-16">Date :-</span>
+        <input type="text" id="entry_date" value="14.8.26" class="w-full bg-white border border-sky-700 px-2 py-0.5 rounded text-xs outline-none" />
+      </div>
+      <div class="flex items-center gap-1">
+        <span class="w-16">Name :-</span>
+        <input type="text" id="party_name" value="Kapil ji" class="w-full bg-white border border-sky-700 px-2 py-0.5 rounded text-xs font-bold outline-none" />
+      </div>
+      <div class="flex items-center gap-1">
+        <span class="w-16">Veh. :-</span>
+        <input type="text" id="veh_no" value="6799" class="w-full bg-white border border-sky-700 px-2 py-0.5 rounded text-xs outline-none" />
+      </div>
     </div>
 
-    <form id="scrapFullForm" class="space-y-6">
-      
-      <div>
-        <h2 class="text-sm font-bold text-amber-300 uppercase tracking-wider mb-3">1. Basic Inward Info</h2>
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1">MR Number *</label>
-            <input type="text" id="mr_no" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm focus:border-amber-400 outline-none" placeholder="MR-2026-001" />
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1">Party Name *</label>
-            <input type="text" id="party_name" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm focus:border-amber-400 outline-none" placeholder="e.g. Sharma Traders" />
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1">Vehicle No. *</label>
-            <input type="text" id="veh_no" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm focus:border-amber-400 outline-none" placeholder="MP 09 AB 1234" />
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1">Firm Name *</label>
-            <select id="firm" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm focus:border-amber-400 outline-none">
-              <option value="Expert Enterprises">Expert Enterprises</option>
-              <option value="Eshaan Enterprises">Eshaan Enterprises</option>
-              <option value="EE">EE</option>
-              <option value="ESS">ESS</option>
-            </select>
-          </div>
-        </div>
-      </div>
+    <!-- Quality Table -->
+    <div class="overflow-x-auto">
+      <table class="w-full border-collapse text-center">
+        <thead>
+          <tr class="bg-sky-300 font-bold border-b border-sky-500 text-xs">
+            <th class="p-1.5 border-r border-sky-500 text-left pl-2">Quality.</th>
+            <th class="p-1.5 border-r border-sky-500 w-12">(+\-)</th>
+            <th class="p-1.5 border-r border-sky-500 w-20">Wt.</th>
+            <th class="p-1.5 border-r border-sky-500 w-20">Rate</th>
+            <th class="p-1.5 w-24">Amount</th>
+          </tr>
+        </thead>
+        <tbody id="qualityRows" class="divide-y divide-sky-300 font-medium text-xs bg-sky-100">
+          <!-- Rows will render here -->
+        </tbody>
+        <tfoot class="bg-sky-200 border-t-2 border-sky-600 font-semibold text-xs divide-y divide-sky-400">
+          <!-- Dust Row -->
+          <tr>
+            <td class="p-1.5 text-left pl-2 font-bold border-r border-sky-400">Dust</td>
+            <td class="p-1 border-r border-sky-400">-</td>
+            <td class="p-1 border-r border-sky-400">
+              <input type="number" id="dust_wt" value="0" class="calc-input w-full bg-white text-center py-0.5 border border-sky-400 rounded outline-none" />
+            </td>
+            <td class="p-1 border-r border-sky-400">-</td>
+            <td class="p-1" id="dust_amount">0</td>
+          </tr>
 
-      <div class="border-t border-slate-800 pt-4">
-        <h2 class="text-sm font-bold text-amber-300 uppercase tracking-wider mb-3">2. Base Weights & Inward Rates</h2>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1">Party Weight (Kg)</label>
-            <input type="number" step="any" id="party_wt" value="0" class="calc-trigger w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm focus:border-amber-400 outline-none" />
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1">Base Rate (₹/Kg)</label>
-            <input type="number" step="any" id="base_rate" value="0" class="calc-trigger w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm focus:border-amber-400 outline-none" />
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1">Dust Weight (Kg)</label>
-            <input type="number" step="any" id="dust_wt" value="0" class="calc-trigger w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm focus:border-amber-400 outline-none" />
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1">Gross Bill Value (₹)</label>
-            <input type="number" step="any" id="gross_bill_val" value="0" class="calc-trigger w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm focus:border-amber-400 outline-none" />
-          </div>
-        </div>
-      </div>
+          <!-- Total Wt Row -->
+          <tr class="bg-sky-300/60">
+            <td class="p-1.5 text-left pl-2 font-bold border-r border-sky-500">Total Wt. :-</td>
+            <td class="p-1 border-r border-sky-500" id="total_diff">0</td>
+            <td class="p-1 border-r border-sky-500 font-bold" id="total_wt">0</td>
+            <td class="p-1 border-r border-sky-500">-</td>
+            <td class="p-1 font-bold" id="total_amount">0</td>
+          </tr>
 
-      <div class="border-t border-slate-800 pt-4">
-        <h2 class="text-sm font-bold text-amber-300 uppercase tracking-wider mb-3">3. 11 Grade Segment Weights (Kg)</h2>
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 text-xs">
-          <div><label class="text-slate-400">80:20 Scrap</label><input type="number" step="any" id="g_80_20" value="0" class="grade-input w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-sm outline-none" /></div>
-          <div><label class="text-slate-400">HMS 1</label><input type="number" step="any" id="g_hms1" value="0" class="grade-input w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-sm outline-none" /></div>
-          <div><label class="text-slate-400">HMS 2</label><input type="number" step="any" id="g_hms2" value="0" class="grade-input w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-sm outline-none" /></div>
-          <div><label class="text-slate-400">CRC / Bundles</label><input type="number" step="any" id="g_crc" value="0" class="grade-input w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-sm outline-none" /></div>
-          <div><label class="text-slate-400">Turning / Boring</label><input type="number" step="any" id="g_turning" value="0" class="grade-input w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-sm outline-none" /></div>
-          <div><label class="text-slate-400">Tin / Light Scrap</label><input type="number" step="any" id="g_tin" value="0" class="grade-input w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-sm outline-none" /></div>
-          <div><label class="text-slate-400">Cast Iron (CI)</label><input type="number" step="any" id="g_cast_iron" value="0" class="grade-input w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-sm outline-none" /></div>
-          <div><label class="text-slate-400">Heavy Melting</label><input type="number" step="any" id="g_heavy" value="0" class="grade-input w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-sm outline-none" /></div>
-          <div><label class="text-slate-400">Plate & Structure</label><input type="number" step="any" id="g_plate" value="0" class="grade-input w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-sm outline-none" /></div>
-          <div><label class="text-slate-400">End Cuts</label><input type="number" step="any" id="g_end_cuts" value="0" class="grade-input w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-sm outline-none" /></div>
-          <div><label class="text-slate-400">Rejection / Mixed</label><input type="number" step="any" id="g_rejection" value="0" class="grade-input w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-sm outline-none" /></div>
-        </div>
-      </div>
+          <!-- Penalty / Rate Diff & Tax -->
+          <tr>
+            <td colspan="2" class="p-1.5 text-left pl-2 font-bold border-r border-sky-400">Penalty / Rate diff.</td>
+            <td class="p-1 border-r border-sky-400">
+              <input type="number" id="penalty" value="0" class="calc-input w-full bg-white text-center py-0.5 border border-sky-400 rounded outline-none" />
+            </td>
+            <td class="p-1 font-bold border-r border-sky-400">Tax :-</td>
+            <td class="p-1">
+              <input type="number" id="tax_amount" value="0" class="calc-input w-full bg-white text-center py-0.5 border border-sky-400 rounded outline-none" />
+            </td>
+          </tr>
 
-      <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl space-y-3">
-        <h3 class="text-xs font-bold text-slate-400 uppercase">Automated Live Calculations</h3>
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-3 text-center">
-          <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800">
-            <p class="text-xs text-slate-400">Total Plant Wt</p>
-            <p id="disp_plant_wt" class="text-base font-bold text-sky-400">0 Kg</p>
-          </div>
-          <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800">
-            <p class="text-xs text-slate-400">Weight Diff</p>
-            <p id="disp_wt_diff" class="text-base font-bold text-amber-400">0 Kg</p>
-          </div>
-          <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800">
-            <p class="text-xs text-slate-400">Net Calculated Val</p>
-            <p id="disp_net_val" class="text-base font-bold text-emerald-400">₹ 0</p>
-          </div>
-          <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800">
-            <p class="text-xs text-slate-400">DR/CR Amount</p>
-            <p id="disp_drcr_val" class="text-base font-bold text-rose-400">₹ 0</p>
-          </div>
-          <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800">
-            <p class="text-xs text-slate-400">Status</p>
-            <p id="disp_status" class="text-xs font-bold text-slate-300 mt-1">NO DIFF</p>
-          </div>
-        </div>
-      </div>
+          <!-- TDS & G.Total -->
+          <tr class="bg-sky-300/70 font-bold">
+            <td class="p-1" id="tds_val">0</td>
+            <td colspan="2" class="p-1.5 text-left pl-2 border-r border-sky-500">TDS 2%</td>
+            <td class="p-1.5 font-bold border-r border-sky-500">G.Total</td>
+            <td class="p-1 font-bold text-sky-950 text-sm" id="g_total">0</td>
+          </tr>
 
-      <button type="submit" id="submitBtn" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3.5 rounded-xl text-base shadow-lg transition">
-        Submit & Save to Cloud Database
+          <!-- Base Rate & Dr / Cr Note -->
+          <tr class="bg-sky-400 font-bold">
+            <td colspan="2" class="p-1 border-r border-sky-600">
+              <input type="number" id="base_final_rate" value="32600" class="calc-input w-full bg-white text-center py-0.5 border border-sky-700 rounded outline-none font-bold" placeholder="Base Rate" />
+            </td>
+            <td colspan="2" class="p-1.5 text-right pr-2 border-r border-sky-600">Dr & Cr Note :-</td>
+            <td class="p-1 text-sm font-black text-rose-900" id="dr_cr_note">0</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- Action Button -->
+    <div class="p-3 bg-sky-300 border-t-2 border-sky-600 flex flex-col gap-2">
+      <button type="button" id="saveBtn" class="w-full bg-sky-700 hover:bg-sky-800 text-white font-bold py-2.5 rounded shadow text-sm transition">
+        Save Slip to Supabase Cloud
       </button>
-      <p id="feedbackMsg" class="text-center text-sm font-semibold hidden"></p>
-    </form>
+      <p id="statusMsg" class="text-center font-bold text-xs hidden"></p>
+    </div>
   </div>
 
   <script>
@@ -126,86 +113,115 @@
     const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92cXN4cXBxaHhiaWNmYmRyY2FqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEyNDk3MzMsImV4cCI6MjA1Njg0OTczM30.OnfnOVxQFz5nRxqUGd2YHrmS2SSx4MbHSgK8GjYSzDo";
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-    // Live Calculation Function
-    function runCalculations() {
-      const partyWt = parseFloat(document.getElementById('party_wt').value) || 0;
-      const baseRate = parseFloat(document.getElementById('base_rate').value) || 0;
-      const dustWt = parseFloat(document.getElementById('dust_wt').value) || 0;
-      const grossBillVal = parseFloat(document.getElementById('gross_bill_val').value) || 0;
+    const grades = [
+      { id: "mc_new", name: "MC (New)", rate: 34400 },
+      { id: "mc_old", name: "MC (Old)", rate: 33600 },
+      { id: "mh", name: "M.H.", rate: 33100 },
+      { id: "sh", name: "S.H.", rate: 32600, defaultWt: 30030 },
+      { id: "heavy", name: "Heavy", rate: 32000 },
+      { id: "pt", name: "P.T.", rate: 32000 },
+      { id: "kh", name: "K.H.", rate: 31300 },
+      { id: "com", name: "Com.", rate: 30500 },
+      { id: "lcom", name: "L.Com.", rate: 29600 },
+      { id: "ll", name: "L.L.", rate: 28600 },
+      { id: "l2", name: "L2", rate: 27600 }
+    ];
 
-      const gradeInputs = document.querySelectorAll('.grade-input');
-      let totalPlantWt = 0;
-      gradeInputs.forEach(input => totalPlantWt += (parseFloat(input.value) || 0));
-
-      const wtDiff = totalPlantWt - partyWt;
-      const netEffectiveWt = Math.max(0, totalPlantWt - dustWt);
-      const netCalculatedVal = netEffectiveWt * baseRate;
-      const drcrDiff = netCalculatedVal - grossBillVal;
-
-      document.getElementById('disp_plant_wt').innerText = totalPlantWt.toFixed(2) + " Kg";
-      document.getElementById('disp_wt_diff').innerText = (wtDiff >= 0 ? "+" : "") + wtDiff.toFixed(2) + " Kg";
-      document.getElementById('disp_net_val').innerText = "₹ " + netCalculatedVal.toLocaleString('en-IN', { maximumFractionDigits: 2 });
-      document.getElementById('disp_drcr_val').innerText = "₹ " + Math.abs(drcrDiff).toLocaleString('en-IN', { maximumFractionDigits: 2 });
-
-      const statusElem = document.getElementById('disp_status');
-      if (drcrDiff > 0) {
-        statusElem.innerText = "CREDIT NOTE (CR)";
-        statusElem.className = "text-xs font-bold text-emerald-400 mt-1";
-      } else if (drcrDiff < 0) {
-        statusElem.innerText = "DEBIT NOTE (DR)";
-        statusElem.className = "text-xs font-bold text-rose-400 mt-1";
-      } else {
-        statusElem.innerText = "BALANCED";
-        statusElem.className = "text-xs font-bold text-slate-300 mt-1";
-      }
-
-      return { totalPlantWt, wtDiff, netCalculatedVal, drcrDiff };
-    }
-
-    document.querySelectorAll('.calc-trigger, .grade-input').forEach(el => {
-      el.addEventListener('input', runCalculations);
+    const tbody = document.getElementById('qualityRows');
+    grades.forEach(g => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">${g.name}</td>
+        <td class="p-1 border-r border-sky-300">
+          <input type="number" id="diff_${g.id}" value="0" class="calc-input w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" />
+        </td>
+        <td class="p-1 border-r border-sky-300">
+          <input type="number" id="wt_${g.id}" value="${g.defaultWt || 0}" class="calc-input w-full bg-white text-center py-0.5 border border-sky-300 rounded font-semibold outline-none" />
+        </td>
+        <td class="p-1 border-r border-sky-300">
+          <input type="number" id="rate_${g.id}" value="${g.rate}" class="calc-input w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" />
+        </td>
+        <td class="p-1 font-bold" id="amt_${g.id}">0</td>
+      `;
+      tbody.appendChild(tr);
     });
 
-    // Form Submission
-    const form = document.getElementById('scrapFullForm');
-    const msg = document.getElementById('feedbackMsg');
+    function calculateSlip() {
+      let totalWt = 0;
+      let totalDiff = 0;
+      let totalAmount = 0;
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const btn = document.getElementById('submitBtn');
+      grades.forEach(g => {
+        const diff = parseFloat(document.getElementById(`diff_${g.id}`).value) || 0;
+        const wt = parseFloat(document.getElementById(`wt_${g.id}`).value) || 0;
+        const rate = parseFloat(document.getElementById(`rate_${g.id}`).value) || 0;
+        
+        // Scrap rate is per ton (divided by 1000)
+        const amt = Math.round((wt * rate) / 1000);
+        document.getElementById(`amt_${g.id}`).innerText = amt;
+
+        totalDiff += diff;
+        totalWt += wt;
+        totalAmount += amt;
+      });
+
+      const dustWt = parseFloat(document.getElementById('dust_wt').value) || 0;
+      const penalty = parseFloat(document.getElementById('penalty').value) || 0;
+      const tax = parseFloat(document.getElementById('tax_amount').value) || 0;
+      const baseFinalRate = parseFloat(document.getElementById('base_final_rate').value) || 0;
+
+      const netEffectiveWt = totalWt - dustWt;
+      document.getElementById('total_diff').innerText = totalDiff;
+      document.getElementById('total_wt').innerText = netEffectiveWt;
+      document.getElementById('total_amount').innerText = totalAmount;
+
+      const tds = Math.round(totalAmount * 0.02);
+      document.getElementById('tds_val').innerText = tds;
+
+      const gTotal = totalAmount + tax - penalty;
+      document.getElementById('g_total').innerText = gTotal;
+
+      // Base Billing comparison for Dr/Cr Note
+      const baseExpectedVal = Math.round((netEffectiveWt * baseFinalRate) / 1000);
+      const drCr = gTotal - baseExpectedVal;
+      document.getElementById('dr_cr_note').innerText = Math.abs(drCr);
+
+      return { totalWt: netEffectiveWt, totalAmount, gTotal, drCr };
+    }
+
+    document.querySelectorAll('.calc-input').forEach(input => {
+      input.addEventListener('input', calculateSlip);
+    });
+
+    calculateSlip();
+
+    document.getElementById('saveBtn').addEventListener('click', async () => {
+      const btn = document.getElementById('saveBtn');
+      const msg = document.getElementById('statusMsg');
       btn.disabled = true;
-      btn.innerText = "Saving to Database...";
+      btn.innerText = "Saving...";
 
-      const calc = runCalculations();
-
+      const res = calculateSlip();
       const payload = {
         mr_no: document.getElementById('mr_no').value,
         party_name: document.getElementById('party_name').value,
         veh_no: document.getElementById('veh_no').value,
-        firm: document.getElementById('firm').value,
-        party_wt: parseFloat(document.getElementById('party_wt').value) || 0,
-        base_rate: parseFloat(document.getElementById('base_rate').value) || 0,
-        dust_wt: parseFloat(document.getElementById('dust_wt').value) || 0,
-        gross_bill_val: parseFloat(document.getElementById('gross_bill_val').value) || 0,
-        plant_wt: calc.totalPlantWt,
-        wt_diff: calc.wtDiff,
-        net_payable: calc.netCalculatedVal,
-        drcr_amount: calc.drcrDiff
+        plant_wt: res.totalWt,
+        gross_bill_val: res.gTotal,
+        drcr_amount: res.drCr
       };
 
       const { error } = await supabase.from('scrap_master').insert([payload]);
-
+      msg.classList.remove('hidden');
       if (error) {
-        msg.className = "text-center text-sm font-semibold text-rose-400 mt-2 block";
+        msg.className = "text-center font-bold text-xs text-red-700 block";
         msg.innerText = "Error: " + error.message;
       } else {
-        msg.className = "text-center text-sm font-semibold text-emerald-400 mt-2 block";
-        msg.innerText = "✓ Record Saved & Synced Successfully!";
-        form.reset();
-        runCalculations();
+        msg.className = "text-center font-bold text-xs text-emerald-800 block";
+        msg.innerText = "✓ Slip Saved to Database Successfully!";
       }
       btn.disabled = false;
-      btn.innerText = "Submit & Save to Cloud Database";
+      btn.innerText = "Save Slip to Supabase Cloud";
     });
   </script>
 </body>
