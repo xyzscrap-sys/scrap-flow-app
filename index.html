@@ -3,199 +3,281 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Scrap Inward & Purchase Slip</title>
+  <title>Scrap Master & Party Ledger Portal</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="bg-slate-900 min-h-screen p-2 sm:p-4 flex items-center justify-center font-sans">
+<body class="bg-slate-950 text-slate-100 min-h-screen p-2 sm:p-4 font-sans flex flex-col items-center">
 
-  <div class="w-full max-w-xl bg-sky-200 border-2 border-sky-600 rounded-lg shadow-2xl overflow-hidden text-slate-900 text-xs">
+  <div class="w-full max-w-2xl space-y-4">
     
-    <!-- Header -->
-    <div class="bg-sky-400 border-b-2 border-sky-600 p-2 grid grid-cols-2 gap-2 font-semibold">
-      <div class="flex items-center gap-1">
-        <span class="w-16">MR No. :-</span>
-        <input type="text" id="mr_no" value="231" class="w-full bg-white border border-sky-700 px-2 py-0.5 rounded text-xs font-bold outline-none" />
-      </div>
-      <div class="flex items-center gap-1">
-        <span class="w-16">Date :-</span>
-        <input type="text" id="entry_date" value="14.8.26" class="w-full bg-white border border-sky-700 px-2 py-0.5 rounded text-xs outline-none" />
-      </div>
-      <div class="flex items-center gap-1">
-        <span class="w-16">Name :-</span>
-        <input type="text" id="party_name" value="Kapil ji" class="w-full bg-white border border-sky-700 px-2 py-0.5 rounded text-xs font-bold outline-none" />
-      </div>
-      <div class="flex items-center gap-1">
-        <span class="w-16">Veh. :-</span>
-        <input type="text" id="veh_no" value="6799" class="w-full bg-white border border-sky-700 px-2 py-0.5 rounded text-xs outline-none" />
-      </div>
-    </div>
-
-    <!-- Complete 11 Grades Table (Direct Fixed Rows) -->
-    <div class="overflow-x-auto">
-      <table class="w-full border-collapse text-center">
-        <thead>
-          <tr class="bg-sky-300 font-bold border-b border-sky-500 text-xs">
-            <th class="p-1.5 border-r border-sky-500 text-left pl-2">Quality.</th>
-            <th class="p-1.5 border-r border-sky-500 w-16">(+\-) Extra</th>
-            <th class="p-1.5 border-r border-sky-500 w-20">Wt. (Kg)</th>
-            <th class="p-1.5 border-r border-sky-500 w-20">Rate</th>
-            <th class="p-1.5 w-24">Amount (₹)</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-sky-300 font-medium bg-sky-100 text-xs">
-          <!-- 1. MC (New) [+1800] -->
-          <tr data-std="1800">
-            <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">MC (New)</td>
-            <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
-            <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
-            <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
-            <td class="p-1 font-bold amt-disp">0</td>
-          </tr>
-          <!-- 2. MC (Old) [+1000] -->
-          <tr data-std="1000">
-            <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">MC (Old)</td>
-            <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
-            <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
-            <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
-            <td class="p-1 font-bold amt-disp">0</td>
-          </tr>
-          <!-- 3. M.H. [+500] -->
-          <tr data-std="500">
-            <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">M.H.</td>
-            <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
-            <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
-            <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
-            <td class="p-1 font-bold amt-disp">0</td>
-          </tr>
-          <!-- 4. S.H. [0] -->
-          <tr data-std="0">
-            <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">S.H.</td>
-            <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
-            <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-bold text-sky-950" value="30030" /></td>
-            <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
-            <td class="p-1 font-bold amt-disp">0</td>
-          </tr>
-          <!-- 5. Heavy [-600] -->
-          <tr data-std="-600">
-            <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">Heavy</td>
-            <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
-            <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
-            <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
-            <td class="p-1 font-bold amt-disp">0</td>
-          </tr>
-          <!-- 6. P.T. [-600] -->
-          <tr data-std="-600">
-            <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">P.T.</td>
-            <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
-            <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
-            <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
-            <td class="p-1 font-bold amt-disp">0</td>
-          </tr>
-          <!-- 7. K.H. [-1300] -->
-          <tr data-std="-1300">
-            <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">K.H.</td>
-            <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
-            <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
-            <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
-            <td class="p-1 font-bold amt-disp">0</td>
-          </tr>
-          <!-- 8. Com. [-2100] -->
-          <tr data-std="-2100">
-            <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">Com.</td>
-            <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
-            <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
-            <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
-            <td class="p-1 font-bold amt-disp">0</td>
-          </tr>
-          <!-- 9. L.Com. [-3000] -->
-          <tr data-std="-3000">
-            <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">L.Com.</td>
-            <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
-            <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
-            <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
-            <td class="p-1 font-bold amt-disp">0</td>
-          </tr>
-          <!-- 10. L.L. [-4000] -->
-          <tr data-std="-4000">
-            <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">L.L.</td>
-            <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
-            <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
-            <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
-            <td class="p-1 font-bold amt-disp">0</td>
-          </tr>
-          <!-- 11. L2 [-5000] -->
-          <tr data-std="-5000">
-            <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">L2</td>
-            <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
-            <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
-            <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
-            <td class="p-1 font-bold amt-disp">0</td>
-          </tr>
-        </tbody>
-        <tfoot class="bg-sky-200 border-t-2 border-sky-600 font-semibold text-xs divide-y divide-sky-400">
-          <!-- Dust Row -->
-          <tr>
-            <td class="p-1.5 text-left pl-2 font-bold border-r border-sky-400">Dust</td>
-            <td class="p-1 border-r border-sky-400">-</td>
-            <td class="p-1 border-r border-sky-400">
-              <input type="number" id="dust_wt" value="0" class="w-full bg-white text-center py-0.5 border border-sky-400 rounded outline-none" />
-            </td>
-            <td class="p-1 border-r border-sky-400">-</td>
-            <td class="p-1">0</td>
-          </tr>
-
-          <!-- Total Wt Row -->
-          <tr class="bg-sky-300/60 font-bold">
-            <td class="p-1.5 text-left pl-2 border-r border-sky-500">Total Wt. :-</td>
-            <td class="p-1 border-r border-sky-500" id="total_diff">0</td>
-            <td class="p-1 border-r border-sky-500 text-sky-950 font-black" id="total_wt">0</td>
-            <td class="p-1 border-r border-sky-500">-</td>
-            <td class="p-1 font-black text-sky-950" id="total_amount">0</td>
-          </tr>
-
-          <!-- Penalty / Rate Diff & Tax -->
-          <tr>
-            <td colspan="2" class="p-1.5 text-left pl-2 font-bold border-r border-sky-400">Penalty / Rate diff.</td>
-            <td class="p-1 border-r border-sky-400">
-              <input type="number" id="penalty" value="0" class="w-full bg-white text-center py-0.5 border border-sky-400 rounded outline-none" />
-            </td>
-            <td class="p-1 font-bold border-r border-sky-400">Tax :-</td>
-            <td class="p-1">
-              <input type="number" id="tax_amount" value="0" class="w-full bg-white text-center py-0.5 border border-sky-400 rounded outline-none" />
-            </td>
-          </tr>
-
-          <!-- TDS & G.Total -->
-          <tr class="bg-sky-300/80 font-bold">
-            <td class="p-1" id="tds_val">0</td>
-            <td colspan="2" class="p-1.5 text-left pl-2 border-r border-sky-500">TDS 2%</td>
-            <td class="p-1.5 font-bold border-r border-sky-500">G.Total</td>
-            <td class="p-1 font-black text-sky-950 text-sm" id="g_total">0</td>
-          </tr>
-
-          <!-- S.H. Base Rate & Dr / Cr Note -->
-          <tr class="bg-sky-400 font-bold">
-            <td colspan="2" class="p-1 border-r border-sky-600">
-              <div class="flex items-center gap-1">
-                <span class="text-[10px] text-sky-900 font-bold">SH Base:</span>
-                <input type="number" id="sh_base_rate" value="32600" class="w-full bg-white text-center py-0.5 border border-sky-700 rounded outline-none font-bold text-sky-950" placeholder="Base Rate" />
-              </div>
-            </td>
-            <td colspan="2" class="p-1.5 text-right pr-2 border-r border-sky-600 font-bold">Dr & Cr Note :-</td>
-            <td class="p-1 text-sm font-black text-rose-950" id="dr_cr_note">0</td>
-          </tr>
-        </tfoot>
-      </table>
-    </div>
-
-    <!-- Action Button -->
-    <div class="p-3 bg-sky-300 border-t-2 border-sky-600 flex flex-col gap-2">
-      <button type="button" id="saveBtn" class="w-full bg-sky-800 hover:bg-sky-900 text-white font-bold py-2.5 rounded shadow text-sm transition">
-        Save Slip to Supabase Cloud
+    <!-- Navigation Tabs -->
+    <div class="flex rounded-xl bg-slate-900 p-1 border border-slate-800">
+      <button id="tabBtnSlip" onclick="switchTab('slip')" class="flex-1 py-2 text-xs font-bold rounded-lg bg-sky-600 text-white shadow">
+        📋 Scrap Inward Slip (11 Grades)
       </button>
-      <p id="statusMsg" class="text-center font-bold text-xs hidden"></p>
+      <button id="tabBtnLedger" onclick="switchTab('ledger')" class="flex-1 py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white">
+        💰 Party Ledger & Payments
+      </button>
     </div>
+
+    <!-- ================= TAB 1: BLUE SLIP INTERFACE ================= -->
+    <div id="tabSlip" class="w-full bg-sky-200 border-2 border-sky-600 rounded-lg shadow-2xl overflow-hidden text-slate-900 text-xs">
+      
+      <!-- Slip Header -->
+      <div class="bg-sky-400 border-b-2 border-sky-600 p-2 grid grid-cols-2 gap-2 font-semibold">
+        <div class="flex items-center gap-1">
+          <span class="w-16">MR No. :-</span>
+          <input type="text" id="mr_no" value="231" class="w-full bg-white border border-sky-700 px-2 py-0.5 rounded text-xs font-bold outline-none" />
+        </div>
+        <div class="flex items-center gap-1">
+          <span class="w-16">Date :-</span>
+          <input type="text" id="entry_date" value="14.8.26" class="w-full bg-white border border-sky-700 px-2 py-0.5 rounded text-xs outline-none" />
+        </div>
+        <div class="flex items-center gap-1">
+          <span class="w-16">Name :-</span>
+          <input type="text" id="party_name" value="Kapil ji" class="w-full bg-white border border-sky-700 px-2 py-0.5 rounded text-xs font-bold outline-none" />
+        </div>
+        <div class="flex items-center gap-1">
+          <span class="w-16">Veh. :-</span>
+          <input type="text" id="veh_no" value="6799" class="w-full bg-white border border-sky-700 px-2 py-0.5 rounded text-xs outline-none" />
+        </div>
+      </div>
+
+      <!-- 11 Grades Table -->
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse text-center">
+          <thead>
+            <tr class="bg-sky-300 font-bold border-b border-sky-500 text-xs">
+              <th class="p-1.5 border-r border-sky-500 text-left pl-2">Quality.</th>
+              <th class="p-1.5 border-r border-sky-500 w-16">(+\-) Extra</th>
+              <th class="p-1.5 border-r border-sky-500 w-20">Wt. (Kg)</th>
+              <th class="p-1.5 border-r border-sky-500 w-20">Rate</th>
+              <th class="p-1.5 w-24">Amount (₹)</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-sky-300 font-medium bg-sky-100 text-xs">
+            <tr data-std="1800">
+              <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">MC (New)</td>
+              <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
+              <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
+              <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
+              <td class="p-1 font-bold amt-disp">0</td>
+            </tr>
+            <tr data-std="1000">
+              <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">MC (Old)</td>
+              <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
+              <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
+              <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
+              <td class="p-1 font-bold amt-disp">0</td>
+            </tr>
+            <tr data-std="500">
+              <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">M.H.</td>
+              <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
+              <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
+              <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
+              <td class="p-1 font-bold amt-disp">0</td>
+            </tr>
+            <tr data-std="0">
+              <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">S.H.</td>
+              <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
+              <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-bold text-sky-950" value="30030" /></td>
+              <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
+              <td class="p-1 font-bold amt-disp">0</td>
+            </tr>
+            <tr data-std="-600">
+              <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">Heavy</td>
+              <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
+              <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
+              <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
+              <td class="p-1 font-bold amt-disp">0</td>
+            </tr>
+            <tr data-std="-600">
+              <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">P.T.</td>
+              <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
+              <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
+              <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
+              <td class="p-1 font-bold amt-disp">0</td>
+            </tr>
+            <tr data-std="-1300">
+              <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">K.H.</td>
+              <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
+              <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
+              <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
+              <td class="p-1 font-bold amt-disp">0</td>
+            </tr>
+            <tr data-std="-2100">
+              <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">Com.</td>
+              <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
+              <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
+              <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
+              <td class="p-1 font-bold amt-disp">0</td>
+            </tr>
+            <tr data-std="-3000">
+              <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">L.Com.</td>
+              <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
+              <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
+              <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
+              <td class="p-1 font-bold amt-disp">0</td>
+            </tr>
+            <tr data-std="-4000">
+              <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">L.L.</td>
+              <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
+              <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
+              <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
+              <td class="p-1 font-bold amt-disp">0</td>
+            </tr>
+            <tr data-std="-5000">
+              <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">L2</td>
+              <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
+              <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
+              <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
+              <td class="p-1 font-bold amt-disp">0</td>
+            </tr>
+          </tbody>
+          <tfoot class="bg-sky-200 border-t-2 border-sky-600 font-semibold text-xs divide-y divide-sky-400">
+            <tr>
+              <td class="p-1.5 text-left pl-2 font-bold border-r border-sky-400">Dust</td>
+              <td class="p-1 border-r border-sky-400">-</td>
+              <td class="p-1 border-r border-sky-400">
+                <input type="number" id="dust_wt" value="0" class="w-full bg-white text-center py-0.5 border border-sky-400 rounded outline-none" />
+              </td>
+              <td class="p-1 border-r border-sky-400">-</td>
+              <td class="p-1">0</td>
+            </tr>
+            <tr class="bg-sky-300/60 font-bold">
+              <td class="p-1.5 text-left pl-2 border-r border-sky-500">Total Wt. :-</td>
+              <td class="p-1 border-r border-sky-500" id="total_diff">0</td>
+              <td class="p-1 border-r border-sky-500 text-sky-950 font-black" id="total_wt">0</td>
+              <td class="p-1 border-r border-sky-500">-</td>
+              <td class="p-1 font-black text-sky-950" id="total_amount">0</td>
+            </tr>
+            <tr>
+              <td colspan="2" class="p-1.5 text-left pl-2 font-bold border-r border-sky-400">Penalty / Rate diff.</td>
+              <td class="p-1 border-r border-sky-400">
+                <input type="number" id="penalty" value="0" class="w-full bg-white text-center py-0.5 border border-sky-400 rounded outline-none" />
+              </td>
+              <td class="p-1 font-bold border-r border-sky-400">Tax :-</td>
+              <td class="p-1">
+                <input type="number" id="tax_amount" value="0" class="w-full bg-white text-center py-0.5 border border-sky-400 rounded outline-none" />
+              </td>
+            </tr>
+            <tr class="bg-sky-300/80 font-bold">
+              <td class="p-1" id="tds_val">0</td>
+              <td colspan="2" class="p-1.5 text-left pl-2 border-r border-sky-500">TDS 2%</td>
+              <td class="p-1.5 font-bold border-r border-sky-500">G.Total</td>
+              <td class="p-1 font-black text-sky-950 text-sm" id="g_total">0</td>
+            </tr>
+            <tr class="bg-sky-400 font-bold">
+              <td colspan="2" class="p-1 border-r border-sky-600">
+                <div class="flex items-center gap-1">
+                  <span class="text-[10px] text-sky-900 font-bold">SH Base:</span>
+                  <input type="number" id="sh_base_rate" value="32600" class="w-full bg-white text-center py-0.5 border border-sky-700 rounded outline-none font-bold text-sky-950" />
+                </div>
+              </td>
+              <td colspan="2" class="p-1.5 text-right pr-2 border-r border-sky-600 font-bold">Dr & Cr Note :-</td>
+              <td class="p-1 text-sm font-black text-rose-950" id="dr_cr_note">0</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <!-- Slip Save Button -->
+      <div class="p-3 bg-sky-300 border-t-2 border-sky-600 flex flex-col gap-2">
+        <button type="button" id="saveSlipBtn" class="w-full bg-sky-800 hover:bg-sky-900 text-white font-bold py-2.5 rounded shadow text-sm transition">
+          Save Slip & Sync to Ledger
+        </button>
+        <p id="slipStatusMsg" class="text-center font-bold text-xs hidden"></p>
+      </div>
+    </div>
+
+    <!-- ================= TAB 2: MULTI-ROLE LEDGER ================= -->
+    <div id="tabLedger" class="hidden w-full space-y-4">
+      
+      <!-- Role Switcher Bar -->
+      <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl flex flex-wrap justify-between items-center gap-3">
+        <div>
+          <h2 class="text-sm font-bold text-amber-400 uppercase">Ledger & Payment Portal</h2>
+          <p class="text-[10px] text-slate-400">Date-wise Ledger, Cashier Payment & Receiving</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <label class="text-xs font-bold text-slate-300">Active Role:</label>
+          <select id="roleSelector" class="bg-slate-950 border border-amber-500/50 text-amber-400 font-bold px-2.5 py-1 rounded text-xs outline-none">
+            <option value="admin">Admin (Full Control - Edit/Del)</option>
+            <option value="cashier">Cashier (Payment Out Only)</option>
+            <option value="party">Party / Customer (Ledger & Receiving)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Ledger Entry Form -->
+      <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl shadow-xl text-xs space-y-3">
+        <h3 id="ledgerFormTitle" class="font-bold text-sky-400 uppercase">Add Payment / Ledger Entry</h3>
+        <form id="ledgerForm" class="space-y-3">
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <div>
+              <label class="block text-slate-400 mb-0.5">Date</label>
+              <input type="date" id="ledger_date" required class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs outline-none focus:border-sky-400" />
+            </div>
+            <div>
+              <label class="block text-slate-400 mb-0.5">Party Name</label>
+              <input type="text" id="ledger_party" required placeholder="Party Name" class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs font-bold outline-none focus:border-sky-400" />
+            </div>
+            <div>
+              <label class="block text-slate-400 mb-0.5">Voucher Type</label>
+              <select id="ledger_voucher" class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs outline-none focus:border-sky-400">
+                <option value="PAYMENT_OUT">Payment Out (Cashier/Admin)</option>
+                <option value="RECEIVING">Receiving Note (Customer/Party)</option>
+                <option value="PURCHASE_BILL">Material / Scrap Bill (CR)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-slate-400 mb-0.5">Amount (₹)</label>
+              <input type="number" step="any" id="ledger_amount" required placeholder="0" class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs font-bold text-emerald-400 outline-none focus:border-sky-400" />
+            </div>
+          </div>
+          <div>
+            <label class="block text-slate-400 mb-0.5">Narration / Payment Details</label>
+            <input type="text" id="ledger_narration" required placeholder="e.g. Paid via RTGS UTR# 998811 / Cash given" class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs outline-none focus:border-sky-400" />
+          </div>
+          <button type="submit" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 rounded text-xs transition shadow">
+            Submit & Update Ledger
+          </button>
+        </form>
+      </div>
+
+      <!-- Ledger Statement Table -->
+      <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl shadow-xl space-y-3">
+        <div class="flex flex-wrap justify-between items-center gap-2 border-b border-slate-800 pb-2">
+          <h3 class="text-xs font-bold text-amber-400 uppercase">Party Account Statement</h3>
+          <div class="flex items-center gap-2 text-xs">
+            <input type="text" id="partyFilter" placeholder="Filter Party Name..." class="bg-slate-950 border border-slate-700 px-2 py-1 rounded text-xs outline-none focus:border-amber-400" />
+            <button onclick="loadLedger()" class="bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded text-slate-200">↻</button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-center border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-950 text-slate-400 border-b border-slate-800 text-[11px]">
+                <th class="p-2 text-left pl-3">Date</th>
+                <th class="p-2 text-left">Party</th>
+                <th class="p-2 text-left">Voucher & Narration</th>
+                <th class="p-2 text-right text-rose-400">Paid / DR (₹)</th>
+                <th class="p-2 text-right text-emerald-400">Recv / CR (₹)</th>
+                <th class="p-2 text-right pr-3">Balance (₹)</th>
+                <th class="p-2 text-center admin-col">Action</th>
+              </tr>
+            </thead>
+            <tbody id="ledgerRows" class="divide-y divide-slate-800">
+              <tr><td colspan="7" class="p-4 text-center text-slate-500">Loading ledger records...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
   </div>
 
   <script>
@@ -203,13 +285,30 @@
     const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92cXN4cXBxaHhiaWNmYmRyY2FqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEyNDk3MzMsImV4cCI6MjA1Njg0OTczM30.OnfnOVxQFz5nRxqUGd2YHrmS2SSx4MbHSgK8GjYSzDo";
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
+    // Tab Switcher
+    function switchTab(tab) {
+      if (tab === 'slip') {
+        document.getElementById('tabSlip').classList.remove('hidden');
+        document.getElementById('tabLedger').classList.add('hidden');
+        document.getElementById('tabBtnSlip').className = "flex-1 py-2 text-xs font-bold rounded-lg bg-sky-600 text-white shadow";
+        document.getElementById('tabBtnLedger').className = "flex-1 py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white";
+      } else {
+        document.getElementById('tabSlip').classList.add('hidden');
+        document.getElementById('tabLedger').classList.remove('hidden');
+        document.getElementById('tabBtnLedger').className = "flex-1 py-2 text-xs font-bold rounded-lg bg-sky-600 text-white shadow";
+        document.getElementById('tabBtnSlip').className = "flex-1 py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white";
+        loadLedger();
+      }
+    }
+
+    // SLIP CALCULATIONS
     function calculateSlip() {
       const shBase = parseFloat(document.getElementById('sh_base_rate').value) || 0;
       let totalWt = 0;
       let totalDiff = 0;
       let totalAmount = 0;
 
-      const rows = document.querySelectorAll('tbody tr');
+      const rows = document.querySelectorAll('#tabSlip tbody tr');
       rows.forEach(row => {
         const stdDiff = parseFloat(row.getAttribute('data-std')) || 0;
         const extraDiff = parseFloat(row.querySelector('.diff-in').value) || 0;
@@ -248,41 +347,167 @@
       return { netEffectiveWt, totalAmount, gTotal, drCr, shBase };
     }
 
-    document.querySelectorAll('input').forEach(input => {
+    document.querySelectorAll('#tabSlip input').forEach(input => {
       input.addEventListener('input', calculateSlip);
     });
-
     calculateSlip();
 
-    document.getElementById('saveBtn').addEventListener('click', async () => {
-      const btn = document.getElementById('saveBtn');
-      const msg = document.getElementById('statusMsg');
+    // SAVE SLIP & SYNC TO LEDGER
+    document.getElementById('saveSlipBtn').addEventListener('click', async () => {
+      const btn = document.getElementById('saveSlipBtn');
+      const msg = document.getElementById('slipStatusMsg');
       btn.disabled = true;
-      btn.innerText = "Saving to Database...";
+      btn.innerText = "Saving & Syncing...";
 
       const res = calculateSlip();
-      const payload = {
-        mr_no: document.getElementById('mr_no').value,
-        party_name: document.getElementById('party_name').value,
-        veh_no: document.getElementById('veh_no').value,
+      const party = document.getElementById('party_name').value.trim();
+      const mrNo = document.getElementById('mr_no').value.trim();
+      const vehNo = document.getElementById('veh_no').value.trim();
+
+      // 1. Save to scrap_master
+      const { error: err1 } = await supabase.from('scrap_master').insert([{
+        mr_no: mrNo,
+        party_name: party,
+        veh_no: vehNo,
         base_rate: res.shBase,
         plant_wt: res.netEffectiveWt,
         gross_bill_val: res.gTotal,
         drcr_amount: res.drCr
-      };
+      }]);
 
-      const { error } = await supabase.from('scrap_master').insert([payload]);
+      // 2. Auto-post bill entry to party_ledger
+      const { error: err2 } = await supabase.from('party_ledger').insert([{
+        party_name: party,
+        voucher_type: 'PURCHASE_BILL',
+        credit_amount: res.gTotal,
+        debit_amount: 0,
+        narration: `Scrap Bill MR: ${mrNo} | Veh: ${vehNo} | Wt: ${res.netEffectiveWt}kg`,
+        created_by_role: 'admin'
+      }]);
+
       msg.classList.remove('hidden');
-      if (error) {
+      if (err1 || err2) {
         msg.className = "text-center font-bold text-xs text-red-700 block";
-        msg.innerText = "Error: " + error.message;
+        msg.innerText = "Error: " + (err1?.message || err2?.message);
       } else {
         msg.className = "text-center font-bold text-xs text-emerald-800 block";
-        msg.innerText = "✓ Slip Saved to Database Successfully!";
+        msg.innerText = "✓ Slip Saved & Ledger Updated Successfully!";
       }
       btn.disabled = false;
-      btn.innerText = "Save Slip to Supabase Cloud";
+      btn.innerText = "Save Slip & Sync to Ledger";
     });
+
+    // ================= LEDGER LOGIC =================
+    document.getElementById('ledger_date').valueAsDate = new Date();
+    let currentRole = 'admin';
+
+    document.getElementById('roleSelector').addEventListener('change', (e) => {
+      currentRole = e.target.value;
+      updateRoleUI();
+      loadLedger();
+    });
+
+    function updateRoleUI() {
+      const voucherSelect = document.getElementById('ledger_voucher');
+      const formTitle = document.getElementById('ledgerFormTitle');
+      const adminCols = document.querySelectorAll('.admin-col');
+
+      if (currentRole === 'cashier') {
+        formTitle.innerText = "Cashier Desk - Make Payment Out";
+        voucherSelect.value = "PAYMENT_OUT";
+        voucherSelect.disabled = true;
+      } else if (currentRole === 'party') {
+        formTitle.innerText = "Customer Desk - Submit Receiving Note";
+        voucherSelect.value = "RECEIVING";
+        voucherSelect.disabled = true;
+      } else {
+        formTitle.innerText = "Admin Portal - Complete Ledger Management";
+        voucherSelect.disabled = false;
+      }
+
+      adminCols.forEach(col => col.style.display = currentRole === 'admin' ? '' : 'none');
+    }
+
+    async function loadLedger() {
+      const filter = document.getElementById('partyFilter').value.trim();
+      let query = supabase.from('party_ledger').select('*').order('entry_date', { ascending: true }).order('id', { ascending: true });
+      if (filter) query = query.ilike('party_name', `%${filter}%`);
+
+      const { data, error } = await query;
+      const tbody = document.getElementById('ledgerRows');
+      tbody.innerHTML = '';
+
+      if (error || !data || data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-500">No ledger entries found.</td></tr>`;
+        return;
+      }
+
+      let runningBalance = 0;
+      data.forEach(row => {
+        const dr = parseFloat(row.debit_amount) || 0;
+        const cr = parseFloat(row.credit_amount) || 0;
+        runningBalance += (cr - dr);
+
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-800/50";
+        tr.innerHTML = `
+          <td class="p-2 text-left pl-3 text-slate-400">${row.entry_date}</td>
+          <td class="p-2 text-left font-bold text-amber-300">${row.party_name}</td>
+          <td class="p-2 text-left">
+            <span class="text-[10px] px-1.5 py-0.5 rounded ${row.voucher_type === 'PAYMENT_OUT' ? 'bg-rose-950 text-rose-300 border border-rose-800' : 'bg-emerald-950 text-emerald-300 border border-emerald-800'} font-semibold mr-1">${row.voucher_type}</span>
+            <span class="text-slate-300">${row.narration}</span>
+          </td>
+          <td class="p-2 text-right font-bold text-rose-400">${dr > 0 ? '₹ ' + dr.toLocaleString('en-IN') : '-'}</td>
+          <td class="p-2 text-right font-bold text-emerald-400">${cr > 0 ? '₹ ' + cr.toLocaleString('en-IN') : '-'}</td>
+          <td class="p-2 text-right pr-3 font-black ${runningBalance >= 0 ? 'text-emerald-400' : 'text-rose-400'}">
+            ₹ ${Math.abs(runningBalance).toLocaleString('en-IN')} ${runningBalance >= 0 ? 'CR' : 'DR'}
+          </td>
+          <td class="p-2 text-center admin-col">
+            ${currentRole === 'admin' ? `
+              <button onclick="deleteEntry(${row.id})" class="bg-rose-900/60 hover:bg-rose-700 text-rose-200 px-2 py-0.5 rounded text-[10px] border border-rose-700">Del</button>
+            ` : ''}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+      updateRoleUI();
+    }
+
+    document.getElementById('ledgerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const party = document.getElementById('ledger_party').value.trim();
+      const date = document.getElementById('ledger_date').value;
+      const voucher = document.getElementById('ledger_voucher').value;
+      const amt = parseFloat(document.getElementById('ledger_amount').value) || 0;
+      const narration = document.getElementById('ledger_narration').value.trim();
+
+      const { error } = await supabase.from('party_ledger').insert([{
+        entry_date: date,
+        party_name: party,
+        voucher_type: voucher,
+        debit_amount: voucher === 'PAYMENT_OUT' ? amt : 0,
+        credit_amount: voucher !== 'PAYMENT_OUT' ? amt : 0,
+        narration: narration,
+        created_by_role: currentRole
+      }]);
+
+      if (error) alert("Error: " + error.message);
+      else {
+        document.getElementById('ledger_amount').value = '';
+        document.getElementById('ledger_narration').value = '';
+        loadLedger();
+      }
+    });
+
+    window.deleteEntry = async function(id) {
+      if (confirm("Delete this entry?")) {
+        const { error } = await supabase.from('party_ledger').delete().eq('id', id);
+        if (error) alert("Error: " + error.message);
+        else loadLedger();
+      }
+    };
+
+    document.getElementById('partyFilter').addEventListener('input', loadLedger);
   </script>
 </body>
 </html>
