@@ -11,7 +11,7 @@
 
   <div class="w-full max-w-xl bg-sky-200 border-2 border-sky-600 rounded-lg shadow-2xl overflow-hidden text-slate-900 text-xs">
     
-    <!-- Top Header: MR, Date, Name, Veh -->
+    <!-- Header -->
     <div class="bg-sky-400 border-b-2 border-sky-600 p-2 grid grid-cols-2 gap-2 font-semibold">
       <div class="flex items-center gap-1">
         <span class="w-16">MR No. :-</span>
@@ -31,7 +31,7 @@
       </div>
     </div>
 
-    <!-- 11 Grades Complete Table -->
+    <!-- Complete 11 Grades Table (Direct Fixed Rows) -->
     <div class="overflow-x-auto">
       <table class="w-full border-collapse text-center">
         <thead>
@@ -39,12 +39,99 @@
             <th class="p-1.5 border-r border-sky-500 text-left pl-2">Quality.</th>
             <th class="p-1.5 border-r border-sky-500 w-16">(+\-) Extra</th>
             <th class="p-1.5 border-r border-sky-500 w-20">Wt. (Kg)</th>
-            <th class="p-1.5 border-r border-sky-500 w-20">Rate (Auto)</th>
+            <th class="p-1.5 border-r border-sky-500 w-20">Rate</th>
             <th class="p-1.5 w-24">Amount (₹)</th>
           </tr>
         </thead>
-        <tbody id="qualityRows" class="divide-y divide-sky-300 font-medium bg-sky-100">
-          <!-- 11 rows will render dynamically with exact fixed differences -->
+        <tbody class="divide-y divide-sky-300 font-medium bg-sky-100 text-xs">
+          <!-- 1. MC (New) [+1800] -->
+          <tr data-std="1800">
+            <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">MC (New)</td>
+            <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
+            <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
+            <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
+            <td class="p-1 font-bold amt-disp">0</td>
+          </tr>
+          <!-- 2. MC (Old) [+1000] -->
+          <tr data-std="1000">
+            <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">MC (Old)</td>
+            <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
+            <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
+            <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
+            <td class="p-1 font-bold amt-disp">0</td>
+          </tr>
+          <!-- 3. M.H. [+500] -->
+          <tr data-std="500">
+            <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">M.H.</td>
+            <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
+            <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
+            <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
+            <td class="p-1 font-bold amt-disp">0</td>
+          </tr>
+          <!-- 4. S.H. [0] -->
+          <tr data-std="0">
+            <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">S.H.</td>
+            <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
+            <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-bold text-sky-950" value="30030" /></td>
+            <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
+            <td class="p-1 font-bold amt-disp">0</td>
+          </tr>
+          <!-- 5. Heavy [-600] -->
+          <tr data-std="-600">
+            <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">Heavy</td>
+            <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
+            <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
+            <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
+            <td class="p-1 font-bold amt-disp">0</td>
+          </tr>
+          <!-- 6. P.T. [-600] -->
+          <tr data-std="-600">
+            <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">P.T.</td>
+            <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
+            <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
+            <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
+            <td class="p-1 font-bold amt-disp">0</td>
+          </tr>
+          <!-- 7. K.H. [-1300] -->
+          <tr data-std="-1300">
+            <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">K.H.</td>
+            <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
+            <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
+            <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
+            <td class="p-1 font-bold amt-disp">0</td>
+          </tr>
+          <!-- 8. Com. [-2100] -->
+          <tr data-std="-2100">
+            <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">Com.</td>
+            <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
+            <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
+            <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
+            <td class="p-1 font-bold amt-disp">0</td>
+          </tr>
+          <!-- 9. L.Com. [-3000] -->
+          <tr data-std="-3000">
+            <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">L.Com.</td>
+            <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
+            <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
+            <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
+            <td class="p-1 font-bold amt-disp">0</td>
+          </tr>
+          <!-- 10. L.L. [-4000] -->
+          <tr data-std="-4000">
+            <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">L.L.</td>
+            <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
+            <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
+            <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
+            <td class="p-1 font-bold amt-disp">0</td>
+          </tr>
+          <!-- 11. L2 [-5000] -->
+          <tr data-std="-5000">
+            <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">L2</td>
+            <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
+            <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
+            <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
+            <td class="p-1 font-bold amt-disp">0</td>
+          </tr>
         </tbody>
         <tfoot class="bg-sky-200 border-t-2 border-sky-600 font-semibold text-xs divide-y divide-sky-400">
           <!-- Dust Row -->
@@ -52,7 +139,7 @@
             <td class="p-1.5 text-left pl-2 font-bold border-r border-sky-400">Dust</td>
             <td class="p-1 border-r border-sky-400">-</td>
             <td class="p-1 border-r border-sky-400">
-              <input type="number" id="dust_wt" value="0" class="calc-trigger w-full bg-white text-center py-0.5 border border-sky-400 rounded outline-none" />
+              <input type="number" id="dust_wt" value="0" class="w-full bg-white text-center py-0.5 border border-sky-400 rounded outline-none" />
             </td>
             <td class="p-1 border-r border-sky-400">-</td>
             <td class="p-1">0</td>
@@ -71,11 +158,11 @@
           <tr>
             <td colspan="2" class="p-1.5 text-left pl-2 font-bold border-r border-sky-400">Penalty / Rate diff.</td>
             <td class="p-1 border-r border-sky-400">
-              <input type="number" id="penalty" value="0" class="calc-trigger w-full bg-white text-center py-0.5 border border-sky-400 rounded outline-none" />
+              <input type="number" id="penalty" value="0" class="w-full bg-white text-center py-0.5 border border-sky-400 rounded outline-none" />
             </td>
             <td class="p-1 font-bold border-r border-sky-400">Tax :-</td>
             <td class="p-1">
-              <input type="number" id="tax_amount" value="0" class="calc-trigger w-full bg-white text-center py-0.5 border border-sky-400 rounded outline-none" />
+              <input type="number" id="tax_amount" value="0" class="w-full bg-white text-center py-0.5 border border-sky-400 rounded outline-none" />
             </td>
           </tr>
 
@@ -92,7 +179,7 @@
             <td colspan="2" class="p-1 border-r border-sky-600">
               <div class="flex items-center gap-1">
                 <span class="text-[10px] text-sky-900 font-bold">SH Base:</span>
-                <input type="number" id="sh_base_rate" value="32600" class="calc-trigger w-full bg-white text-center py-0.5 border border-sky-700 rounded outline-none font-bold text-sky-950" placeholder="Base Rate" />
+                <input type="number" id="sh_base_rate" value="32600" class="w-full bg-white text-center py-0.5 border border-sky-700 rounded outline-none font-bold text-sky-950" placeholder="Base Rate" />
               </div>
             </td>
             <td colspan="2" class="p-1.5 text-right pr-2 border-r border-sky-600 font-bold">Dr & Cr Note :-</td>
@@ -116,57 +203,23 @@
     const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92cXN4cXBxaHhiaWNmYmRyY2FqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEyNDk3MzMsImV4cCI6MjA1Njg0OTczM30.OnfnOVxQFz5nRxqUGd2YHrmS2SSx4MbHSgK8GjYSzDo";
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-    // 11 Grades with Fixed Standard Differences from S.H.
-    const gradeConfigs = [
-      { id: 1, name: "MC (New)", stdDiff: 1800, defaultWt: 0, defaultExtra: 0 },
-      { id: 2, name: "MC (Old)", stdDiff: 1000, defaultWt: 0, defaultExtra: 0 },
-      { id: 3, name: "M.H.", stdDiff: 500, defaultWt: 0, defaultExtra: 0 },
-      { id: 4, name: "S.H.", stdDiff: 0, defaultWt: 30030, defaultExtra: 0 },
-      { id: 5, name: "Heavy", stdDiff: -600, defaultWt: 0, defaultExtra: 0 },
-      { id: 6, name: "P.T.", stdDiff: -600, defaultWt: 0, defaultExtra: 0 },
-      { id: 7, name: "K.H.", stdDiff: -1300, defaultWt: 0, defaultExtra: 0 },
-      { id: 8, name: "Com.", stdDiff: -2100, defaultWt: 0, defaultExtra: 0 },
-      { id: 9, name: "L.Com.", stdDiff: -3000, defaultWt: 0, defaultExtra: 0 },
-      { id: 10, name: "L.L.", stdDiff: -4000, defaultWt: 0, defaultExtra: 0 },
-      { id: 11, name: "L2", stdDiff: -5000, defaultWt: 0, defaultExtra: 0 }
-    ];
-
-    const tbody = document.getElementById('qualityRows');
-    gradeConfigs.forEach(g => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td class="p-1 text-left pl-2 font-semibold border-r border-sky-300">${g.name}</td>
-        <td class="p-1 border-r border-sky-300">
-          <input type="number" id="diff_${g.id}" value="${g.defaultExtra}" placeholder="0" class="calc-trigger w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-medium" />
-        </td>
-        <td class="p-1 border-r border-sky-300">
-          <input type="number" id="wt_${g.id}" value="${g.defaultWt}" placeholder="0" class="calc-trigger w-full bg-white text-center py-0.5 border border-sky-300 rounded font-semibold outline-none text-sky-950" />
-        </td>
-        <td class="p-1 border-r border-sky-300 bg-sky-200/50 font-bold text-sky-900" id="rate_disp_${g.id}">
-          0
-        </td>
-        <td class="p-1 font-bold text-sky-950" id="amt_${g.id}">0</td>
-      `;
-      tbody.appendChild(tr);
-    });
-
     function calculateSlip() {
       const shBase = parseFloat(document.getElementById('sh_base_rate').value) || 0;
       let totalWt = 0;
       let totalDiff = 0;
       let totalAmount = 0;
 
-      gradeConfigs.forEach(g => {
-        const extraDiff = parseFloat(document.getElementById(`diff_${g.id}`).value) || 0;
-        const wt = parseFloat(document.getElementById(`wt_${g.id}`).value) || 0;
-        
-        // Auto Calculate Dynamic Rate = SH Base + Fixed Std Diff + Manual Extra Diff
-        const effectiveRate = shBase + g.stdDiff + extraDiff;
-        document.getElementById(`rate_disp_${g.id}`).innerText = effectiveRate;
+      const rows = document.querySelectorAll('tbody tr');
+      rows.forEach(row => {
+        const stdDiff = parseFloat(row.getAttribute('data-std')) || 0;
+        const extraDiff = parseFloat(row.querySelector('.diff-in').value) || 0;
+        const wt = parseFloat(row.querySelector('.wt-in').value) || 0;
 
-        // Scrap Amount = (Wt * Rate) / 1000
+        const effectiveRate = shBase + stdDiff + extraDiff;
+        row.querySelector('.rate-disp').innerText = effectiveRate;
+
         const amt = Math.round((wt * effectiveRate) / 1000);
-        document.getElementById(`amt_${g.id}`).innerText = amt;
+        row.querySelector('.amt-disp').innerText = amt;
 
         totalDiff += extraDiff;
         totalWt += wt;
@@ -188,7 +241,6 @@
       const gTotal = totalAmount + tax - penalty;
       document.getElementById('g_total').innerText = gTotal;
 
-      // Base comparison (S.H. Base Rate * Net Wt)
       const baseExpectedVal = Math.round((netEffectiveWt * shBase) / 1000);
       const drCr = gTotal - baseExpectedVal;
       document.getElementById('dr_cr_note').innerText = Math.abs(drCr);
@@ -196,7 +248,7 @@
       return { netEffectiveWt, totalAmount, gTotal, drCr, shBase };
     }
 
-    document.querySelectorAll('.calc-trigger').forEach(input => {
+    document.querySelectorAll('input').forEach(input => {
       input.addEventListener('input', calculateSlip);
     });
 
