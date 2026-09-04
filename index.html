@@ -5,13 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Scrap Flow & Digital Khatabook</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen p-2 sm:p-4 font-sans flex flex-col items-center">
 
   <div class="w-full max-w-2xl space-y-4">
     
-    <!-- Top Navigation Bar (Tabs) -->
+    <!-- Top Navigation Bar -->
     <div class="flex rounded-xl bg-slate-900 p-1 border border-slate-800 shadow-md">
       <button id="tabBtnKhatabook" onclick="switchMainTab('khatabook')" class="flex-1 py-2.5 text-xs font-bold rounded-lg bg-emerald-600 text-white shadow transition">
         📒 Digital Khatabook
@@ -21,10 +20,10 @@
       </button>
     </div>
 
-    <!-- ================= TAB 1: CLEAN KHATABOOK UI ================= -->
+    <!-- ================= TAB 1: KHATABOOK UI ================= -->
     <div id="tabKhatabook" class="w-full space-y-4">
       
-      <!-- Top Balance Cards -->
+      <!-- Balance Cards -->
       <div class="grid grid-cols-2 gap-3">
         <div class="bg-slate-900 border border-slate-800 p-3.5 rounded-xl text-center shadow-lg">
           <p class="text-[11px] font-semibold text-rose-400 uppercase tracking-wider">Aap Denge (You'll Give)</p>
@@ -36,14 +35,14 @@
         </div>
       </div>
 
-      <!-- Khatabook Entry Card -->
+      <!-- Khata Entry Form -->
       <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl shadow-xl space-y-3">
         <div class="flex justify-between items-center border-b border-slate-800 pb-2">
           <h2 class="text-xs font-bold text-amber-400 uppercase tracking-wide">New Khata Transaction</h2>
           <select id="kb_role" class="bg-slate-950 border border-slate-700 text-slate-300 px-2 py-0.5 rounded text-[11px] outline-none">
-            <option value="admin">Role: Admin (Full Access)</option>
+            <option value="admin">Role: Admin</option>
             <option value="cashier">Role: Cashier</option>
-            <option value="party">Role: Customer / Party</option>
+            <option value="party">Role: Customer</option>
           </select>
         </div>
 
@@ -51,29 +50,29 @@
           <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
             <div>
               <label class="block text-slate-400 mb-0.5">Date</label>
-              <input type="date" id="kb_date" required class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-xs outline-none focus:border-emerald-500" />
+              <input type="date" id="kb_date" required class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-xs outline-none focus:border-emerald-500 text-slate-100" />
             </div>
             <div>
-              <label class="block text-slate-400 mb-0.5">Party / Customer Name</label>
+              <label class="block text-slate-400 mb-0.5">Party Name *</label>
               <input type="text" id="kb_party" required placeholder="e.g. Kapil ji" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-xs font-bold text-amber-300 outline-none focus:border-emerald-500" />
             </div>
             <div class="col-span-2 sm:col-span-1">
-              <label class="block text-slate-400 mb-0.5">Amount (₹)</label>
+              <label class="block text-slate-400 mb-0.5">Amount (₹) *</label>
               <input type="number" step="any" id="kb_amount" required placeholder="0" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-xs font-bold text-slate-100 outline-none focus:border-emerald-500" />
             </div>
           </div>
 
           <div>
-            <label class="block text-slate-400 mb-0.5">Payment Details / Narration</label>
-            <input type="text" id="kb_narration" required placeholder="e.g. Cash / Bank Transfer UTR / Material Receiving" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-xs outline-none focus:border-emerald-500" />
+            <label class="block text-slate-400 mb-0.5">Details / Narration</label>
+            <input type="text" id="kb_narration" placeholder="e.g. RTGS / Cash / Bill payment" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-xs outline-none focus:border-emerald-500 text-slate-100" />
           </div>
 
-          <!-- Dual Action Buttons (Khatabook Style) -->
+          <!-- Action Buttons -->
           <div class="grid grid-cols-2 gap-3 pt-1">
-            <button type="button" onclick="submitKhataEntry('GAVE')" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-2.5 rounded-lg text-xs shadow transition flex items-center justify-center gap-1">
+            <button type="button" id="btnGave" onclick="submitKhataEntry('GAVE')" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-2.5 rounded-lg text-xs shadow transition flex items-center justify-center gap-1">
               🔴 Maine Diya (Paid / DR)
             </button>
-            <button type="button" onclick="submitKhataEntry('GOT')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg text-xs shadow transition flex items-center justify-center gap-1">
+            <button type="button" id="btnGot" onclick="submitKhataEntry('GOT')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg text-xs shadow transition flex items-center justify-center gap-1">
               🟢 Maine Liya (Recv / CR)
             </button>
           </div>
@@ -81,17 +80,16 @@
         </form>
       </div>
 
-      <!-- Party Filter & Live Statement -->
+      <!-- Khata Table -->
       <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl shadow-xl space-y-3">
         <div class="flex flex-wrap justify-between items-center gap-2 border-b border-slate-800 pb-2">
           <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">Khata Statement</h3>
           <div class="flex items-center gap-2">
-            <input type="text" id="kbSearchParty" placeholder="Search Party Name..." class="bg-slate-950 border border-slate-700 px-2.5 py-1 rounded text-xs outline-none focus:border-emerald-500" />
-            <button onclick="loadKhatabook()" class="bg-slate-800 hover:bg-slate-700 px-2 py-1 rounded text-xs text-slate-300">↻ Refresh</button>
+            <input type="text" id="kbSearchParty" placeholder="Search Party..." class="bg-slate-950 border border-slate-700 px-2.5 py-1 rounded text-xs outline-none focus:border-emerald-500 text-slate-100" />
+            <button onclick="loadKhatabook()" class="bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded text-xs text-slate-300">↻ Refresh</button>
           </div>
         </div>
 
-        <!-- Ledger Entries List -->
         <div class="overflow-x-auto">
           <table class="w-full text-center border-collapse text-xs">
             <thead>
@@ -106,7 +104,7 @@
               </tr>
             </thead>
             <tbody id="kbTableRows" class="divide-y divide-slate-800">
-              <tr><td colspan="7" class="p-4 text-center text-slate-500">Loading Khata entries...</td></tr>
+              <tr><td colspan="7" class="p-4 text-center text-slate-500">Connecting to database...</td></tr>
             </tbody>
           </table>
         </div>
@@ -114,10 +112,9 @@
 
     </div>
 
-    <!-- ================= TAB 2: ORIGINAL SCRAP SLIP ================= -->
+    <!-- ================= TAB 2: SCRAP SLIP ================= -->
     <div id="tabSlip" class="hidden w-full bg-sky-200 border-2 border-sky-600 rounded-lg shadow-2xl overflow-hidden text-slate-900 text-xs">
       
-      <!-- Slip Header -->
       <div class="bg-sky-400 border-b-2 border-sky-600 p-2 grid grid-cols-2 gap-2 font-semibold">
         <div class="flex items-center gap-1">
           <span class="w-16">MR No. :-</span>
@@ -137,7 +134,6 @@
         </div>
       </div>
 
-      <!-- 11 Grades Complete Table -->
       <div class="overflow-x-auto">
         <table class="w-full border-collapse text-center">
           <thead>
@@ -183,29 +179,97 @@
   </div>
 
   <script>
-    const SUPABASE_URL = "https://ovqsxqpqhxbicfbdrcaj.supabase.co";
-    const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92cXN4cXBxaHhiaWNmYmRyY2FqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEyNDk3MzMsImV4cCI6MjA1Njg0OTczM30.OnfnOVxQFz5nRxqUGd2YHrmS2SSx4MbHSgK8GjYSzDo";
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+    const API_URL = "https://ovqsxqpqhxbicfbdrcaj.supabase.co/rest/v1";
+    const API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92cXN4cXBxaHhiaWNmYmRyY2FqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEyNDk3MzMsImV4cCI6MjA1Njg0OTczM30.OnfnOVxQFz5nRxqUGd2YHrmS2SSx4MbHSgK8GjYSzDo";
+    
+    const headers = {
+      "apikey": API_KEY,
+      "Authorization": `Bearer ${API_KEY}`,
+      "Content-Type": "application/json",
+      "Prefer": "return=representation"
+    };
 
     document.getElementById('kb_date').valueAsDate = new Date();
 
-    // Tab Switcher
     function switchMainTab(tab) {
       if (tab === 'khatabook') {
         document.getElementById('tabKhatabook').classList.remove('hidden');
         document.getElementById('tabSlip').classList.add('hidden');
-        document.getElementById('tabBtnKhatabook').className = "flex-1 py-2.5 text-xs font-bold rounded-lg bg-emerald-600 text-white shadow";
-        document.getElementById('tabBtnSlip').className = "flex-1 py-2.5 text-xs font-bold rounded-lg text-slate-400 hover:text-white";
+        document.getElementById('tabBtnKhatabook').className = "flex-1 py-2.5 text-xs font-bold rounded-lg bg-emerald-600 text-white shadow transition";
+        document.getElementById('tabBtnSlip').className = "flex-1 py-2.5 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition";
         loadKhatabook();
       } else {
         document.getElementById('tabKhatabook').classList.add('hidden');
         document.getElementById('tabSlip').classList.remove('hidden');
-        document.getElementById('tabBtnSlip').className = "flex-1 py-2.5 text-xs font-bold rounded-lg bg-sky-600 text-white shadow";
-        document.getElementById('tabBtnKhatabook').className = "flex-1 py-2.5 text-xs font-bold rounded-lg text-slate-400 hover:text-white";
+        document.getElementById('tabBtnSlip').className = "flex-1 py-2.5 text-xs font-bold rounded-lg bg-sky-600 text-white shadow transition";
+        document.getElementById('tabBtnKhatabook').className = "flex-1 py-2.5 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition";
       }
     }
 
-    // ================= KHATABOOK LOGIC =================
+    // Direct REST Fetch
+    async function loadKhatabook() {
+      const tbody = document.getElementById('kbTableRows');
+      const filter = document.getElementById('kbSearchParty').value.trim();
+
+      try {
+        let endpoint = `${API_URL}/party_ledger?select=*&order=entry_date.asc,id.asc`;
+        if (filter) endpoint += `&party_name=ilike.*${encodeURIComponent(filter)}*`;
+
+        const res = await fetch(endpoint, { headers });
+        if (!res.ok) throw new Error("Status " + res.status);
+        const data = await res.json();
+
+        tbody.innerHTML = '';
+        if (!data || data.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-500">Koi transaction record nahi mila.</td></tr>`;
+          document.getElementById('kb_total_give').innerText = "₹ 0";
+          document.getElementById('kb_total_get').innerText = "₹ 0";
+          return;
+        }
+
+        let totalDebit = 0;
+        let totalCredit = 0;
+        let runningBalance = 0;
+
+        data.forEach(row => {
+          const dr = parseFloat(row.debit_amount) || 0;
+          const cr = parseFloat(row.credit_amount) || 0;
+          totalDebit += dr;
+          totalCredit += cr;
+          runningBalance += (cr - dr);
+
+          const tr = document.createElement('tr');
+          tr.className = "hover:bg-slate-800/50";
+          tr.innerHTML = `
+            <td class="p-2 text-left pl-3 text-slate-400">${row.entry_date || '-'}</td>
+            <td class="p-2 text-left font-bold text-amber-300">${row.party_name || '-'}</td>
+            <td class="p-2 text-left text-slate-300">${row.narration || '-'}</td>
+            <td class="p-2 text-right font-bold text-rose-400">${dr > 0 ? '₹ ' + dr.toLocaleString('en-IN') : '-'}</td>
+            <td class="p-2 text-right font-bold text-emerald-400">${cr > 0 ? '₹ ' + cr.toLocaleString('en-IN') : '-'}</td>
+            <td class="p-2 text-right pr-3 font-black ${runningBalance >= 0 ? 'text-emerald-400' : 'text-rose-400'}">
+              ₹ ${Math.abs(runningBalance).toLocaleString('en-IN')} ${runningBalance >= 0 ? 'CR' : 'DR'}
+            </td>
+            <td class="p-2 text-center">
+              <button onclick="deleteKhataEntry(${row.id})" class="text-rose-400 hover:text-rose-300 text-[10px] bg-rose-950/60 border border-rose-800 px-2 py-0.5 rounded">Delete</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        const netBalance = totalCredit - totalDebit;
+        if (netBalance >= 0) {
+          document.getElementById('kb_total_give').innerText = "₹ " + netBalance.toLocaleString('en-IN');
+          document.getElementById('kb_total_get').innerText = "₹ 0";
+        } else {
+          document.getElementById('kb_total_give').innerText = "₹ 0";
+          document.getElementById('kb_total_get').innerText = "₹ " + Math.abs(netBalance).toLocaleString('en-IN');
+        }
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-rose-400">Database Connection Error: ${err.message}</td></tr>`;
+      }
+    }
+
+    // Direct REST Insert
     async function submitKhataEntry(type) {
       const party = document.getElementById('kb_party').value.trim();
       const date = document.getElementById('kb_date').value;
@@ -219,93 +283,52 @@
         return;
       }
 
-      const debit = type === 'GAVE' ? amt : 0;
-      const credit = type === 'GOT' ? amt : 0;
-      const voucher = type === 'GAVE' ? 'PAYMENT_OUT' : 'RECEIVING';
-
-      const { error } = await supabase.from('party_ledger').insert([{
+      const payload = {
         entry_date: date,
         party_name: party,
-        voucher_type: voucher,
-        debit_amount: debit,
-        credit_amount: credit,
+        voucher_type: type === 'GAVE' ? 'PAYMENT_OUT' : 'RECEIVING',
+        debit_amount: type === 'GAVE' ? amt : 0,
+        credit_amount: type === 'GOT' ? amt : 0,
         narration: narration || (type === 'GAVE' ? 'Payment Given' : 'Payment Received'),
         created_by_role: role
-      }]);
+      };
 
-      msg.classList.remove('hidden');
-      if (error) {
-        msg.className = "text-center font-bold text-xs text-rose-400 block";
-        msg.innerText = "Error: " + error.message;
-      } else {
+      try {
+        const res = await fetch(`${API_URL}/party_ledger`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify(payload)
+        });
+
+        msg.classList.remove('hidden');
+        if (!res.ok) {
+          const errData = await res.json();
+          throw new Error(errData.message || "Failed to save");
+        }
+
         msg.className = "text-center font-bold text-xs text-emerald-400 block";
-        msg.innerText = `✓ Entry Recorded: ₹ ${amt.toLocaleString('en-IN')} (${type === 'GAVE' ? 'Maine Diya' : 'Maine Liya'})`;
+        msg.innerText = `✓ Entry Recorded: ₹ ${amt.toLocaleString('en-IN')}`;
         document.getElementById('kb_amount').value = '';
         document.getElementById('kb_narration').value = '';
         loadKhatabook();
-      }
-    }
-
-    async function loadKhatabook() {
-      const filter = document.getElementById('kbSearchParty').value.trim();
-      let query = supabase.from('party_ledger').select('*').order('entry_date', { ascending: true }).order('id', { ascending: true });
-      if (filter) query = query.ilike('party_name', `%${filter}%`);
-
-      const { data, error } = await query;
-      const tbody = document.getElementById('kbTableRows');
-      tbody.innerHTML = '';
-
-      if (error || !data || data.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-500">Koi transaction nahi mila.</td></tr>`;
-        document.getElementById('kb_total_give').innerText = "₹ 0";
-        document.getElementById('kb_total_get').innerText = "₹ 0";
-        return;
-      }
-
-      let totalDebit = 0;
-      let totalCredit = 0;
-      let runningBalance = 0;
-
-      data.forEach(row => {
-        const dr = parseFloat(row.debit_amount) || 0;
-        const cr = parseFloat(row.credit_amount) || 0;
-        totalDebit += dr;
-        totalCredit += cr;
-        runningBalance += (cr - dr);
-
-        const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-800/50";
-        tr.innerHTML = `
-          <td class="p-2 text-left pl-3 text-slate-400">${row.entry_date}</td>
-          <td class="p-2 text-left font-bold text-amber-300">${row.party_name}</td>
-          <td class="p-2 text-left text-slate-300">${row.narration || '-'}</td>
-          <td class="p-2 text-right font-bold text-rose-400">${dr > 0 ? '₹ ' + dr.toLocaleString('en-IN') : '-'}</td>
-          <td class="p-2 text-right font-bold text-emerald-400">${cr > 0 ? '₹ ' + cr.toLocaleString('en-IN') : '-'}</td>
-          <td class="p-2 text-right pr-3 font-black ${runningBalance >= 0 ? 'text-emerald-400' : 'text-rose-400'}">
-            ₹ ${Math.abs(runningBalance).toLocaleString('en-IN')} ${runningBalance >= 0 ? 'CR' : 'DR'}
-          </td>
-          <td class="p-2 text-center">
-            <button onclick="deleteKhataEntry(${row.id})" class="text-rose-400 hover:text-rose-300 text-[10px] bg-rose-950/60 border border-rose-800 px-2 py-0.5 rounded">Delete</button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-
-      const netBalance = totalCredit - totalDebit;
-      if (netBalance >= 0) {
-        document.getElementById('kb_total_give').innerText = "₹ " + netBalance.toLocaleString('en-IN');
-        document.getElementById('kb_total_get').innerText = "₹ 0";
-      } else {
-        document.getElementById('kb_total_give').innerText = "₹ 0";
-        document.getElementById('kb_total_get').innerText = "₹ " + Math.abs(netBalance).toLocaleString('en-IN');
+      } catch (err) {
+        msg.className = "text-center font-bold text-xs text-rose-400 block";
+        msg.innerText = "Error: " + err.message;
       }
     }
 
     async function deleteKhataEntry(id) {
       if (confirm("Kya aap is transaction ko delete karna chahte hain?")) {
-        const { error } = await supabase.from('party_ledger').delete().eq('id', id);
-        if (error) alert("Error: " + error.message);
-        else loadKhatabook();
+        try {
+          const res = await fetch(`${API_URL}/party_ledger?id=eq.${id}`, {
+            method: 'DELETE',
+            headers
+          });
+          if (!res.ok) throw new Error("Delete failed");
+          loadKhatabook();
+        } catch (err) {
+          alert("Error: " + err.message);
+        }
       }
     }
 
@@ -362,50 +385,60 @@
     });
     calculateSlip();
 
-    // SAVE SLIP & AUTO POST TO KHATABOOK
     document.getElementById('saveSlipBtn').addEventListener('click', async () => {
       const btn = document.getElementById('saveSlipBtn');
       const msg = document.getElementById('slipStatusMsg');
       btn.disabled = true;
-      btn.innerText = "Saving & Syncing...";
+      btn.innerText = "Saving...";
 
       const res = calculateSlip();
       const party = document.getElementById('party_name').value.trim();
       const mrNo = document.getElementById('mr_no').value.trim();
       const vehNo = document.getElementById('veh_no').value.trim();
 
-      const { error: err1 } = await supabase.from('scrap_master').insert([{
-        mr_no: mrNo,
-        party_name: party,
-        veh_no: vehNo,
-        base_rate: res.shBase,
-        plant_wt: res.netEffectiveWt,
-        gross_bill_val: res.gTotal,
-        drcr_amount: res.drCr
-      }]);
+      try {
+        await fetch(`${API_URL}/scrap_master`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({
+            mr_no: mrNo,
+            party_name: party,
+            veh_no: vehNo,
+            base_rate: res.shBase,
+            plant_wt: res.netEffectiveWt,
+            gross_bill_val: res.gTotal,
+            drcr_amount: res.drCr
+          })
+        });
 
-      const { error: err2 } = await supabase.from('party_ledger').insert([{
-        party_name: party,
-        voucher_type: 'PURCHASE_BILL',
-        credit_amount: res.gTotal,
-        debit_amount: 0,
-        narration: `Scrap Bill MR: ${mrNo} | Veh: ${vehNo} | Wt: ${res.netEffectiveWt}kg`,
-        created_by_role: 'admin'
-      }]);
+        await fetch(`${API_URL}/party_ledger`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({
+            entry_date: new Date().toISOString().split('T')[0],
+            party_name: party,
+            voucher_type: 'PURCHASE_BILL',
+            credit_amount: res.gTotal,
+            debit_amount: 0,
+            narration: `Scrap Bill MR: ${mrNo} | Veh: ${vehNo} | Wt: ${res.netEffectiveWt}kg`,
+            created_by_role: 'admin'
+          })
+        });
 
-      msg.classList.remove('hidden');
-      if (err1 || err2) {
-        msg.className = "text-center font-bold text-xs text-rose-700 block";
-        msg.innerText = "Error: " + (err1?.message || err2?.message);
-      } else {
+        msg.classList.remove('hidden');
         msg.className = "text-center font-bold text-xs text-emerald-800 block";
-        msg.innerText = "✓ Slip Saved & Khata Updated Successfully!";
+        msg.innerText = "✓ Slip Saved & Synced Successfully!";
+      } catch (e) {
+        msg.classList.remove('hidden');
+        msg.className = "text-center font-bold text-xs text-rose-700 block";
+        msg.innerText = "Error: " + e.message;
       }
+
       btn.disabled = false;
       btn.innerText = "Save Slip & Sync to Khatabook";
     });
 
-    // Initial Load
+    // Auto-load data on launch
     loadKhatabook();
   </script>
 </body>
