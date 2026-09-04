@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Scrap Master & Party Ledger Portal</title>
+  <title>Scrap Flow & Digital Khatabook</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -11,18 +11,111 @@
 
   <div class="w-full max-w-2xl space-y-4">
     
-    <!-- Navigation Tabs -->
-    <div class="flex rounded-xl bg-slate-900 p-1 border border-slate-800">
-      <button id="tabBtnSlip" onclick="switchTab('slip')" class="flex-1 py-2 text-xs font-bold rounded-lg bg-sky-600 text-white shadow">
-        📋 Scrap Inward Slip (11 Grades)
+    <!-- Top Navigation Bar (Tabs) -->
+    <div class="flex rounded-xl bg-slate-900 p-1 border border-slate-800 shadow-md">
+      <button id="tabBtnKhatabook" onclick="switchMainTab('khatabook')" class="flex-1 py-2.5 text-xs font-bold rounded-lg bg-emerald-600 text-white shadow transition">
+        📒 Digital Khatabook
       </button>
-      <button id="tabBtnLedger" onclick="switchTab('ledger')" class="flex-1 py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white">
-        💰 Party Ledger & Payments
+      <button id="tabBtnSlip" onclick="switchMainTab('slip')" class="flex-1 py-2.5 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition">
+        📋 Scrap Inward Slip
       </button>
     </div>
 
-    <!-- ================= TAB 1: BLUE SLIP INTERFACE ================= -->
-    <div id="tabSlip" class="w-full bg-sky-200 border-2 border-sky-600 rounded-lg shadow-2xl overflow-hidden text-slate-900 text-xs">
+    <!-- ================= TAB 1: CLEAN KHATABOOK UI ================= -->
+    <div id="tabKhatabook" class="w-full space-y-4">
+      
+      <!-- Top Balance Cards -->
+      <div class="grid grid-cols-2 gap-3">
+        <div class="bg-slate-900 border border-slate-800 p-3.5 rounded-xl text-center shadow-lg">
+          <p class="text-[11px] font-semibold text-rose-400 uppercase tracking-wider">Aap Denge (You'll Give)</p>
+          <p id="kb_total_give" class="text-lg sm:text-xl font-black text-rose-400 mt-1">₹ 0</p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 p-3.5 rounded-xl text-center shadow-lg">
+          <p class="text-[11px] font-semibold text-emerald-400 uppercase tracking-wider">Aap Lenge (You'll Get)</p>
+          <p id="kb_total_get" class="text-lg sm:text-xl font-black text-emerald-400 mt-1">₹ 0</p>
+        </div>
+      </div>
+
+      <!-- Khatabook Entry Card -->
+      <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl shadow-xl space-y-3">
+        <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+          <h2 class="text-xs font-bold text-amber-400 uppercase tracking-wide">New Khata Transaction</h2>
+          <select id="kb_role" class="bg-slate-950 border border-slate-700 text-slate-300 px-2 py-0.5 rounded text-[11px] outline-none">
+            <option value="admin">Role: Admin (Full Access)</option>
+            <option value="cashier">Role: Cashier</option>
+            <option value="party">Role: Customer / Party</option>
+          </select>
+        </div>
+
+        <form id="kbEntryForm" class="space-y-3 text-xs">
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            <div>
+              <label class="block text-slate-400 mb-0.5">Date</label>
+              <input type="date" id="kb_date" required class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-xs outline-none focus:border-emerald-500" />
+            </div>
+            <div>
+              <label class="block text-slate-400 mb-0.5">Party / Customer Name</label>
+              <input type="text" id="kb_party" required placeholder="e.g. Kapil ji" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-xs font-bold text-amber-300 outline-none focus:border-emerald-500" />
+            </div>
+            <div class="col-span-2 sm:col-span-1">
+              <label class="block text-slate-400 mb-0.5">Amount (₹)</label>
+              <input type="number" step="any" id="kb_amount" required placeholder="0" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-xs font-bold text-slate-100 outline-none focus:border-emerald-500" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-slate-400 mb-0.5">Payment Details / Narration</label>
+            <input type="text" id="kb_narration" required placeholder="e.g. Cash / Bank Transfer UTR / Material Receiving" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-xs outline-none focus:border-emerald-500" />
+          </div>
+
+          <!-- Dual Action Buttons (Khatabook Style) -->
+          <div class="grid grid-cols-2 gap-3 pt-1">
+            <button type="button" onclick="submitKhataEntry('GAVE')" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-2.5 rounded-lg text-xs shadow transition flex items-center justify-center gap-1">
+              🔴 Maine Diya (Paid / DR)
+            </button>
+            <button type="button" onclick="submitKhataEntry('GOT')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg text-xs shadow transition flex items-center justify-center gap-1">
+              🟢 Maine Liya (Recv / CR)
+            </button>
+          </div>
+          <p id="kbStatusMsg" class="text-center font-bold text-xs hidden"></p>
+        </form>
+      </div>
+
+      <!-- Party Filter & Live Statement -->
+      <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl shadow-xl space-y-3">
+        <div class="flex flex-wrap justify-between items-center gap-2 border-b border-slate-800 pb-2">
+          <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wide">Khata Statement</h3>
+          <div class="flex items-center gap-2">
+            <input type="text" id="kbSearchParty" placeholder="Search Party Name..." class="bg-slate-950 border border-slate-700 px-2.5 py-1 rounded text-xs outline-none focus:border-emerald-500" />
+            <button onclick="loadKhatabook()" class="bg-slate-800 hover:bg-slate-700 px-2 py-1 rounded text-xs text-slate-300">↻ Refresh</button>
+          </div>
+        </div>
+
+        <!-- Ledger Entries List -->
+        <div class="overflow-x-auto">
+          <table class="w-full text-center border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-950 text-slate-400 border-b border-slate-800 text-[11px]">
+                <th class="p-2 text-left pl-3">Date</th>
+                <th class="p-2 text-left">Party</th>
+                <th class="p-2 text-left">Details</th>
+                <th class="p-2 text-right text-rose-400">Diya (DR)</th>
+                <th class="p-2 text-right text-emerald-400">Liya (CR)</th>
+                <th class="p-2 text-right pr-3">Balance</th>
+                <th class="p-2 text-center">Action</th>
+              </tr>
+            </thead>
+            <tbody id="kbTableRows" class="divide-y divide-slate-800">
+              <tr><td colspan="7" class="p-4 text-center text-slate-500">Loading Khata entries...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ================= TAB 2: ORIGINAL SCRAP SLIP ================= -->
+    <div id="tabSlip" class="hidden w-full bg-sky-200 border-2 border-sky-600 rounded-lg shadow-2xl overflow-hidden text-slate-900 text-xs">
       
       <!-- Slip Header -->
       <div class="bg-sky-400 border-b-2 border-sky-600 p-2 grid grid-cols-2 gap-2 font-semibold">
@@ -44,7 +137,7 @@
         </div>
       </div>
 
-      <!-- 11 Grades Table -->
+      <!-- 11 Grades Complete Table -->
       <div class="overflow-x-auto">
         <table class="w-full border-collapse text-center">
           <thead>
@@ -57,225 +150,34 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-sky-300 font-medium bg-sky-100 text-xs">
-            <tr data-std="1800">
-              <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">MC (New)</td>
-              <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
-              <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
-              <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
-              <td class="p-1 font-bold amt-disp">0</td>
-            </tr>
-            <tr data-std="1000">
-              <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">MC (Old)</td>
-              <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
-              <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
-              <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
-              <td class="p-1 font-bold amt-disp">0</td>
-            </tr>
-            <tr data-std="500">
-              <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">M.H.</td>
-              <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
-              <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
-              <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
-              <td class="p-1 font-bold amt-disp">0</td>
-            </tr>
-            <tr data-std="0">
-              <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">S.H.</td>
-              <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
-              <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-bold text-sky-950" value="30030" /></td>
-              <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
-              <td class="p-1 font-bold amt-disp">0</td>
-            </tr>
-            <tr data-std="-600">
-              <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">Heavy</td>
-              <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
-              <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
-              <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
-              <td class="p-1 font-bold amt-disp">0</td>
-            </tr>
-            <tr data-std="-600">
-              <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">P.T.</td>
-              <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
-              <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
-              <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
-              <td class="p-1 font-bold amt-disp">0</td>
-            </tr>
-            <tr data-std="-1300">
-              <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">K.H.</td>
-              <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
-              <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
-              <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
-              <td class="p-1 font-bold amt-disp">0</td>
-            </tr>
-            <tr data-std="-2100">
-              <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">Com.</td>
-              <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
-              <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
-              <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
-              <td class="p-1 font-bold amt-disp">0</td>
-            </tr>
-            <tr data-std="-3000">
-              <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">L.Com.</td>
-              <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
-              <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
-              <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
-              <td class="p-1 font-bold amt-disp">0</td>
-            </tr>
-            <tr data-std="-4000">
-              <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">L.L.</td>
-              <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
-              <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
-              <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
-              <td class="p-1 font-bold amt-disp">0</td>
-            </tr>
-            <tr data-std="-5000">
-              <td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">L2</td>
-              <td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td>
-              <td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td>
-              <td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td>
-              <td class="p-1 font-bold amt-disp">0</td>
-            </tr>
+            <tr data-std="1800"><td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">MC (New)</td><td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td><td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td><td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td><td class="p-1 font-bold amt-disp">0</td></tr>
+            <tr data-std="1000"><td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">MC (Old)</td><td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td><td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td><td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td><td class="p-1 font-bold amt-disp">0</td></tr>
+            <tr data-std="500"><td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">M.H.</td><td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td><td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td><td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td><td class="p-1 font-bold amt-disp">0</td></tr>
+            <tr data-std="0"><td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">S.H.</td><td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td><td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-bold text-sky-950" value="30030" /></td><td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td><td class="p-1 font-bold amt-disp">0</td></tr>
+            <tr data-std="-600"><td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">Heavy</td><td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td><td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td><td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td><td class="p-1 font-bold amt-disp">0</td></tr>
+            <tr data-std="-600"><td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">P.T.</td><td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td><td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td><td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td><td class="p-1 font-bold amt-disp">0</td></tr>
+            <tr data-std="-1300"><td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">K.H.</td><td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td><td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td><td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td><td class="p-1 font-bold amt-disp">0</td></tr>
+            <tr data-std="-2100"><td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">Com.</td><td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td><td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td><td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td><td class="p-1 font-bold amt-disp">0</td></tr>
+            <tr data-std="-3000"><td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">L.Com.</td><td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td><td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td><td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td><td class="p-1 font-bold amt-disp">0</td></tr>
+            <tr data-std="-4000"><td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">L.L.</td><td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td><td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td><td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td><td class="p-1 font-bold amt-disp">0</td></tr>
+            <tr data-std="-5000"><td class="p-1.5 text-left pl-2 font-semibold border-r border-sky-300">L2</td><td class="p-1 border-r border-sky-300"><input type="number" class="diff-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none" value="0" /></td><td class="p-1 border-r border-sky-300"><input type="number" class="wt-in w-full bg-white text-center py-0.5 border border-sky-300 rounded outline-none font-semibold" value="0" /></td><td class="p-1 border-r border-sky-300 font-bold text-sky-900 rate-disp">0</td><td class="p-1 font-bold amt-disp">0</td></tr>
           </tbody>
           <tfoot class="bg-sky-200 border-t-2 border-sky-600 font-semibold text-xs divide-y divide-sky-400">
-            <tr>
-              <td class="p-1.5 text-left pl-2 font-bold border-r border-sky-400">Dust</td>
-              <td class="p-1 border-r border-sky-400">-</td>
-              <td class="p-1 border-r border-sky-400">
-                <input type="number" id="dust_wt" value="0" class="w-full bg-white text-center py-0.5 border border-sky-400 rounded outline-none" />
-              </td>
-              <td class="p-1 border-r border-sky-400">-</td>
-              <td class="p-1">0</td>
-            </tr>
-            <tr class="bg-sky-300/60 font-bold">
-              <td class="p-1.5 text-left pl-2 border-r border-sky-500">Total Wt. :-</td>
-              <td class="p-1 border-r border-sky-500" id="total_diff">0</td>
-              <td class="p-1 border-r border-sky-500 text-sky-950 font-black" id="total_wt">0</td>
-              <td class="p-1 border-r border-sky-500">-</td>
-              <td class="p-1 font-black text-sky-950" id="total_amount">0</td>
-            </tr>
-            <tr>
-              <td colspan="2" class="p-1.5 text-left pl-2 font-bold border-r border-sky-400">Penalty / Rate diff.</td>
-              <td class="p-1 border-r border-sky-400">
-                <input type="number" id="penalty" value="0" class="w-full bg-white text-center py-0.5 border border-sky-400 rounded outline-none" />
-              </td>
-              <td class="p-1 font-bold border-r border-sky-400">Tax :-</td>
-              <td class="p-1">
-                <input type="number" id="tax_amount" value="0" class="w-full bg-white text-center py-0.5 border border-sky-400 rounded outline-none" />
-              </td>
-            </tr>
-            <tr class="bg-sky-300/80 font-bold">
-              <td class="p-1" id="tds_val">0</td>
-              <td colspan="2" class="p-1.5 text-left pl-2 border-r border-sky-500">TDS 2%</td>
-              <td class="p-1.5 font-bold border-r border-sky-500">G.Total</td>
-              <td class="p-1 font-black text-sky-950 text-sm" id="g_total">0</td>
-            </tr>
-            <tr class="bg-sky-400 font-bold">
-              <td colspan="2" class="p-1 border-r border-sky-600">
-                <div class="flex items-center gap-1">
-                  <span class="text-[10px] text-sky-900 font-bold">SH Base:</span>
-                  <input type="number" id="sh_base_rate" value="32600" class="w-full bg-white text-center py-0.5 border border-sky-700 rounded outline-none font-bold text-sky-950" />
-                </div>
-              </td>
-              <td colspan="2" class="p-1.5 text-right pr-2 border-r border-sky-600 font-bold">Dr & Cr Note :-</td>
-              <td class="p-1 text-sm font-black text-rose-950" id="dr_cr_note">0</td>
-            </tr>
+            <tr><td class="p-1.5 text-left pl-2 font-bold border-r border-sky-400">Dust</td><td class="p-1 border-r border-sky-400">-</td><td class="p-1 border-r border-sky-400"><input type="number" id="dust_wt" value="0" class="w-full bg-white text-center py-0.5 border border-sky-400 rounded outline-none" /></td><td class="p-1 border-r border-sky-400">-</td><td class="p-1">0</td></tr>
+            <tr class="bg-sky-300/60 font-bold"><td class="p-1.5 text-left pl-2 border-r border-sky-500">Total Wt. :-</td><td class="p-1 border-r border-sky-500" id="total_diff">0</td><td class="p-1 border-r border-sky-500 text-sky-950 font-black" id="total_wt">0</td><td class="p-1 border-r border-sky-500">-</td><td class="p-1 font-black text-sky-950" id="total_amount">0</td></tr>
+            <tr><td colspan="2" class="p-1.5 text-left pl-2 font-bold border-r border-sky-400">Penalty / Rate diff.</td><td class="p-1 border-r border-sky-400"><input type="number" id="penalty" value="0" class="w-full bg-white text-center py-0.5 border border-sky-400 rounded outline-none" /></td><td class="p-1 font-bold border-r border-sky-400">Tax :-</td><td class="p-1"><input type="number" id="tax_amount" value="0" class="w-full bg-white text-center py-0.5 border border-sky-400 rounded outline-none" /></td></tr>
+            <tr class="bg-sky-300/80 font-bold"><td class="p-1" id="tds_val">0</td><td colspan="2" class="p-1.5 text-left pl-2 border-r border-sky-500">TDS 2%</td><td class="p-1.5 font-bold border-r border-sky-500">G.Total</td><td class="p-1 font-black text-sky-950 text-sm" id="g_total">0</td></tr>
+            <tr class="bg-sky-400 font-bold"><td colspan="2" class="p-1 border-r border-sky-600"><div class="flex items-center gap-1"><span class="text-[10px] text-sky-900 font-bold">SH Base:</span><input type="number" id="sh_base_rate" value="32600" class="w-full bg-white text-center py-0.5 border border-sky-700 rounded outline-none font-bold text-sky-950" /></div></td><td colspan="2" class="p-1.5 text-right pr-2 border-r border-sky-600 font-bold">Dr & Cr Note :-</td><td class="p-1 text-sm font-black text-rose-950" id="dr_cr_note">0</td></tr>
           </tfoot>
         </table>
       </div>
 
-      <!-- Slip Save Button -->
       <div class="p-3 bg-sky-300 border-t-2 border-sky-600 flex flex-col gap-2">
         <button type="button" id="saveSlipBtn" class="w-full bg-sky-800 hover:bg-sky-900 text-white font-bold py-2.5 rounded shadow text-sm transition">
-          Save Slip & Sync to Ledger
+          Save Slip & Sync to Khatabook
         </button>
         <p id="slipStatusMsg" class="text-center font-bold text-xs hidden"></p>
       </div>
-    </div>
-
-    <!-- ================= TAB 2: MULTI-ROLE LEDGER ================= -->
-    <div id="tabLedger" class="hidden w-full space-y-4">
-      
-      <!-- Role Switcher Bar -->
-      <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl flex flex-wrap justify-between items-center gap-3">
-        <div>
-          <h2 class="text-sm font-bold text-amber-400 uppercase">Ledger & Payment Portal</h2>
-          <p class="text-[10px] text-slate-400">Date-wise Ledger, Cashier Payment & Receiving</p>
-        </div>
-        <div class="flex items-center gap-2">
-          <label class="text-xs font-bold text-slate-300">Active Role:</label>
-          <select id="roleSelector" class="bg-slate-950 border border-amber-500/50 text-amber-400 font-bold px-2.5 py-1 rounded text-xs outline-none">
-            <option value="admin">Admin (Full Control - Edit/Del)</option>
-            <option value="cashier">Cashier (Payment Out Only)</option>
-            <option value="party">Party / Customer (Ledger & Receiving)</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Ledger Entry Form -->
-      <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl shadow-xl text-xs space-y-3">
-        <h3 id="ledgerFormTitle" class="font-bold text-sky-400 uppercase">Add Payment / Ledger Entry</h3>
-        <form id="ledgerForm" class="space-y-3">
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            <div>
-              <label class="block text-slate-400 mb-0.5">Date</label>
-              <input type="date" id="ledger_date" required class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs outline-none focus:border-sky-400" />
-            </div>
-            <div>
-              <label class="block text-slate-400 mb-0.5">Party Name</label>
-              <input type="text" id="ledger_party" required placeholder="Party Name" class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs font-bold outline-none focus:border-sky-400" />
-            </div>
-            <div>
-              <label class="block text-slate-400 mb-0.5">Voucher Type</label>
-              <select id="ledger_voucher" class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs outline-none focus:border-sky-400">
-                <option value="PAYMENT_OUT">Payment Out (Cashier/Admin)</option>
-                <option value="RECEIVING">Receiving Note (Customer/Party)</option>
-                <option value="PURCHASE_BILL">Material / Scrap Bill (CR)</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-slate-400 mb-0.5">Amount (₹)</label>
-              <input type="number" step="any" id="ledger_amount" required placeholder="0" class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs font-bold text-emerald-400 outline-none focus:border-sky-400" />
-            </div>
-          </div>
-          <div>
-            <label class="block text-slate-400 mb-0.5">Narration / Payment Details</label>
-            <input type="text" id="ledger_narration" required placeholder="e.g. Paid via RTGS UTR# 998811 / Cash given" class="w-full bg-slate-950 border border-slate-700 rounded p-1.5 text-xs outline-none focus:border-sky-400" />
-          </div>
-          <button type="submit" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 rounded text-xs transition shadow">
-            Submit & Update Ledger
-          </button>
-        </form>
-      </div>
-
-      <!-- Ledger Statement Table -->
-      <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl shadow-xl space-y-3">
-        <div class="flex flex-wrap justify-between items-center gap-2 border-b border-slate-800 pb-2">
-          <h3 class="text-xs font-bold text-amber-400 uppercase">Party Account Statement</h3>
-          <div class="flex items-center gap-2 text-xs">
-            <input type="text" id="partyFilter" placeholder="Filter Party Name..." class="bg-slate-950 border border-slate-700 px-2 py-1 rounded text-xs outline-none focus:border-amber-400" />
-            <button onclick="loadLedger()" class="bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded text-slate-200">↻</button>
-          </div>
-        </div>
-
-        <div class="overflow-x-auto">
-          <table class="w-full text-center border-collapse text-xs">
-            <thead>
-              <tr class="bg-slate-950 text-slate-400 border-b border-slate-800 text-[11px]">
-                <th class="p-2 text-left pl-3">Date</th>
-                <th class="p-2 text-left">Party</th>
-                <th class="p-2 text-left">Voucher & Narration</th>
-                <th class="p-2 text-right text-rose-400">Paid / DR (₹)</th>
-                <th class="p-2 text-right text-emerald-400">Recv / CR (₹)</th>
-                <th class="p-2 text-right pr-3">Balance (₹)</th>
-                <th class="p-2 text-center admin-col">Action</th>
-              </tr>
-            </thead>
-            <tbody id="ledgerRows" class="divide-y divide-slate-800">
-              <tr><td colspan="7" class="p-4 text-center text-slate-500">Loading ledger records...</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
     </div>
 
   </div>
@@ -285,23 +187,131 @@
     const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92cXN4cXBxaHhiaWNmYmRyY2FqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEyNDk3MzMsImV4cCI6MjA1Njg0OTczM30.OnfnOVxQFz5nRxqUGd2YHrmS2SSx4MbHSgK8GjYSzDo";
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
+    document.getElementById('kb_date').valueAsDate = new Date();
+
     // Tab Switcher
-    function switchTab(tab) {
-      if (tab === 'slip') {
-        document.getElementById('tabSlip').classList.remove('hidden');
-        document.getElementById('tabLedger').classList.add('hidden');
-        document.getElementById('tabBtnSlip').className = "flex-1 py-2 text-xs font-bold rounded-lg bg-sky-600 text-white shadow";
-        document.getElementById('tabBtnLedger').className = "flex-1 py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white";
-      } else {
+    function switchMainTab(tab) {
+      if (tab === 'khatabook') {
+        document.getElementById('tabKhatabook').classList.remove('hidden');
         document.getElementById('tabSlip').classList.add('hidden');
-        document.getElementById('tabLedger').classList.remove('hidden');
-        document.getElementById('tabBtnLedger').className = "flex-1 py-2 text-xs font-bold rounded-lg bg-sky-600 text-white shadow";
-        document.getElementById('tabBtnSlip').className = "flex-1 py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white";
-        loadLedger();
+        document.getElementById('tabBtnKhatabook').className = "flex-1 py-2.5 text-xs font-bold rounded-lg bg-emerald-600 text-white shadow";
+        document.getElementById('tabBtnSlip').className = "flex-1 py-2.5 text-xs font-bold rounded-lg text-slate-400 hover:text-white";
+        loadKhatabook();
+      } else {
+        document.getElementById('tabKhatabook').classList.add('hidden');
+        document.getElementById('tabSlip').classList.remove('hidden');
+        document.getElementById('tabBtnSlip').className = "flex-1 py-2.5 text-xs font-bold rounded-lg bg-sky-600 text-white shadow";
+        document.getElementById('tabBtnKhatabook').className = "flex-1 py-2.5 text-xs font-bold rounded-lg text-slate-400 hover:text-white";
       }
     }
 
-    // SLIP CALCULATIONS
+    // ================= KHATABOOK LOGIC =================
+    async function submitKhataEntry(type) {
+      const party = document.getElementById('kb_party').value.trim();
+      const date = document.getElementById('kb_date').value;
+      const amt = parseFloat(document.getElementById('kb_amount').value) || 0;
+      const narration = document.getElementById('kb_narration').value.trim();
+      const role = document.getElementById('kb_role').value;
+      const msg = document.getElementById('kbStatusMsg');
+
+      if (!party || !amt) {
+        alert("Kripya Party Name aur Amount dono bharein!");
+        return;
+      }
+
+      const debit = type === 'GAVE' ? amt : 0;
+      const credit = type === 'GOT' ? amt : 0;
+      const voucher = type === 'GAVE' ? 'PAYMENT_OUT' : 'RECEIVING';
+
+      const { error } = await supabase.from('party_ledger').insert([{
+        entry_date: date,
+        party_name: party,
+        voucher_type: voucher,
+        debit_amount: debit,
+        credit_amount: credit,
+        narration: narration || (type === 'GAVE' ? 'Payment Given' : 'Payment Received'),
+        created_by_role: role
+      }]);
+
+      msg.classList.remove('hidden');
+      if (error) {
+        msg.className = "text-center font-bold text-xs text-rose-400 block";
+        msg.innerText = "Error: " + error.message;
+      } else {
+        msg.className = "text-center font-bold text-xs text-emerald-400 block";
+        msg.innerText = `✓ Entry Recorded: ₹ ${amt.toLocaleString('en-IN')} (${type === 'GAVE' ? 'Maine Diya' : 'Maine Liya'})`;
+        document.getElementById('kb_amount').value = '';
+        document.getElementById('kb_narration').value = '';
+        loadKhatabook();
+      }
+    }
+
+    async function loadKhatabook() {
+      const filter = document.getElementById('kbSearchParty').value.trim();
+      let query = supabase.from('party_ledger').select('*').order('entry_date', { ascending: true }).order('id', { ascending: true });
+      if (filter) query = query.ilike('party_name', `%${filter}%`);
+
+      const { data, error } = await query;
+      const tbody = document.getElementById('kbTableRows');
+      tbody.innerHTML = '';
+
+      if (error || !data || data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-500">Koi transaction nahi mila.</td></tr>`;
+        document.getElementById('kb_total_give').innerText = "₹ 0";
+        document.getElementById('kb_total_get').innerText = "₹ 0";
+        return;
+      }
+
+      let totalDebit = 0;
+      let totalCredit = 0;
+      let runningBalance = 0;
+
+      data.forEach(row => {
+        const dr = parseFloat(row.debit_amount) || 0;
+        const cr = parseFloat(row.credit_amount) || 0;
+        totalDebit += dr;
+        totalCredit += cr;
+        runningBalance += (cr - dr);
+
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-800/50";
+        tr.innerHTML = `
+          <td class="p-2 text-left pl-3 text-slate-400">${row.entry_date}</td>
+          <td class="p-2 text-left font-bold text-amber-300">${row.party_name}</td>
+          <td class="p-2 text-left text-slate-300">${row.narration || '-'}</td>
+          <td class="p-2 text-right font-bold text-rose-400">${dr > 0 ? '₹ ' + dr.toLocaleString('en-IN') : '-'}</td>
+          <td class="p-2 text-right font-bold text-emerald-400">${cr > 0 ? '₹ ' + cr.toLocaleString('en-IN') : '-'}</td>
+          <td class="p-2 text-right pr-3 font-black ${runningBalance >= 0 ? 'text-emerald-400' : 'text-rose-400'}">
+            ₹ ${Math.abs(runningBalance).toLocaleString('en-IN')} ${runningBalance >= 0 ? 'CR' : 'DR'}
+          </td>
+          <td class="p-2 text-center">
+            <button onclick="deleteKhataEntry(${row.id})" class="text-rose-400 hover:text-rose-300 text-[10px] bg-rose-950/60 border border-rose-800 px-2 py-0.5 rounded">Delete</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      const netBalance = totalCredit - totalDebit;
+      if (netBalance >= 0) {
+        document.getElementById('kb_total_give').innerText = "₹ " + netBalance.toLocaleString('en-IN');
+        document.getElementById('kb_total_get').innerText = "₹ 0";
+      } else {
+        document.getElementById('kb_total_give').innerText = "₹ 0";
+        document.getElementById('kb_total_get').innerText = "₹ " + Math.abs(netBalance).toLocaleString('en-IN');
+      }
+    }
+
+    async function deleteKhataEntry(id) {
+      if (confirm("Kya aap is transaction ko delete karna chahte hain?")) {
+        const { error } = await supabase.from('party_ledger').delete().eq('id', id);
+        if (error) alert("Error: " + error.message);
+        else loadKhatabook();
+      }
+    }
+
+    document.getElementById('kbSearchParty').addEventListener('input', loadKhatabook);
+
+    // ================= SLIP CALCULATIONS =================
     function calculateSlip() {
       const shBase = parseFloat(document.getElementById('sh_base_rate').value) || 0;
       let totalWt = 0;
@@ -352,7 +362,7 @@
     });
     calculateSlip();
 
-    // SAVE SLIP & SYNC TO LEDGER
+    // SAVE SLIP & AUTO POST TO KHATABOOK
     document.getElementById('saveSlipBtn').addEventListener('click', async () => {
       const btn = document.getElementById('saveSlipBtn');
       const msg = document.getElementById('slipStatusMsg');
@@ -364,7 +374,6 @@
       const mrNo = document.getElementById('mr_no').value.trim();
       const vehNo = document.getElementById('veh_no').value.trim();
 
-      // 1. Save to scrap_master
       const { error: err1 } = await supabase.from('scrap_master').insert([{
         mr_no: mrNo,
         party_name: party,
@@ -375,7 +384,6 @@
         drcr_amount: res.drCr
       }]);
 
-      // 2. Auto-post bill entry to party_ledger
       const { error: err2 } = await supabase.from('party_ledger').insert([{
         party_name: party,
         voucher_type: 'PURCHASE_BILL',
@@ -387,127 +395,18 @@
 
       msg.classList.remove('hidden');
       if (err1 || err2) {
-        msg.className = "text-center font-bold text-xs text-red-700 block";
+        msg.className = "text-center font-bold text-xs text-rose-700 block";
         msg.innerText = "Error: " + (err1?.message || err2?.message);
       } else {
         msg.className = "text-center font-bold text-xs text-emerald-800 block";
-        msg.innerText = "✓ Slip Saved & Ledger Updated Successfully!";
+        msg.innerText = "✓ Slip Saved & Khata Updated Successfully!";
       }
       btn.disabled = false;
-      btn.innerText = "Save Slip & Sync to Ledger";
+      btn.innerText = "Save Slip & Sync to Khatabook";
     });
 
-    // ================= LEDGER LOGIC =================
-    document.getElementById('ledger_date').valueAsDate = new Date();
-    let currentRole = 'admin';
-
-    document.getElementById('roleSelector').addEventListener('change', (e) => {
-      currentRole = e.target.value;
-      updateRoleUI();
-      loadLedger();
-    });
-
-    function updateRoleUI() {
-      const voucherSelect = document.getElementById('ledger_voucher');
-      const formTitle = document.getElementById('ledgerFormTitle');
-      const adminCols = document.querySelectorAll('.admin-col');
-
-      if (currentRole === 'cashier') {
-        formTitle.innerText = "Cashier Desk - Make Payment Out";
-        voucherSelect.value = "PAYMENT_OUT";
-        voucherSelect.disabled = true;
-      } else if (currentRole === 'party') {
-        formTitle.innerText = "Customer Desk - Submit Receiving Note";
-        voucherSelect.value = "RECEIVING";
-        voucherSelect.disabled = true;
-      } else {
-        formTitle.innerText = "Admin Portal - Complete Ledger Management";
-        voucherSelect.disabled = false;
-      }
-
-      adminCols.forEach(col => col.style.display = currentRole === 'admin' ? '' : 'none');
-    }
-
-    async function loadLedger() {
-      const filter = document.getElementById('partyFilter').value.trim();
-      let query = supabase.from('party_ledger').select('*').order('entry_date', { ascending: true }).order('id', { ascending: true });
-      if (filter) query = query.ilike('party_name', `%${filter}%`);
-
-      const { data, error } = await query;
-      const tbody = document.getElementById('ledgerRows');
-      tbody.innerHTML = '';
-
-      if (error || !data || data.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-500">No ledger entries found.</td></tr>`;
-        return;
-      }
-
-      let runningBalance = 0;
-      data.forEach(row => {
-        const dr = parseFloat(row.debit_amount) || 0;
-        const cr = parseFloat(row.credit_amount) || 0;
-        runningBalance += (cr - dr);
-
-        const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-800/50";
-        tr.innerHTML = `
-          <td class="p-2 text-left pl-3 text-slate-400">${row.entry_date}</td>
-          <td class="p-2 text-left font-bold text-amber-300">${row.party_name}</td>
-          <td class="p-2 text-left">
-            <span class="text-[10px] px-1.5 py-0.5 rounded ${row.voucher_type === 'PAYMENT_OUT' ? 'bg-rose-950 text-rose-300 border border-rose-800' : 'bg-emerald-950 text-emerald-300 border border-emerald-800'} font-semibold mr-1">${row.voucher_type}</span>
-            <span class="text-slate-300">${row.narration}</span>
-          </td>
-          <td class="p-2 text-right font-bold text-rose-400">${dr > 0 ? '₹ ' + dr.toLocaleString('en-IN') : '-'}</td>
-          <td class="p-2 text-right font-bold text-emerald-400">${cr > 0 ? '₹ ' + cr.toLocaleString('en-IN') : '-'}</td>
-          <td class="p-2 text-right pr-3 font-black ${runningBalance >= 0 ? 'text-emerald-400' : 'text-rose-400'}">
-            ₹ ${Math.abs(runningBalance).toLocaleString('en-IN')} ${runningBalance >= 0 ? 'CR' : 'DR'}
-          </td>
-          <td class="p-2 text-center admin-col">
-            ${currentRole === 'admin' ? `
-              <button onclick="deleteEntry(${row.id})" class="bg-rose-900/60 hover:bg-rose-700 text-rose-200 px-2 py-0.5 rounded text-[10px] border border-rose-700">Del</button>
-            ` : ''}
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-      updateRoleUI();
-    }
-
-    document.getElementById('ledgerForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const party = document.getElementById('ledger_party').value.trim();
-      const date = document.getElementById('ledger_date').value;
-      const voucher = document.getElementById('ledger_voucher').value;
-      const amt = parseFloat(document.getElementById('ledger_amount').value) || 0;
-      const narration = document.getElementById('ledger_narration').value.trim();
-
-      const { error } = await supabase.from('party_ledger').insert([{
-        entry_date: date,
-        party_name: party,
-        voucher_type: voucher,
-        debit_amount: voucher === 'PAYMENT_OUT' ? amt : 0,
-        credit_amount: voucher !== 'PAYMENT_OUT' ? amt : 0,
-        narration: narration,
-        created_by_role: currentRole
-      }]);
-
-      if (error) alert("Error: " + error.message);
-      else {
-        document.getElementById('ledger_amount').value = '';
-        document.getElementById('ledger_narration').value = '';
-        loadLedger();
-      }
-    });
-
-    window.deleteEntry = async function(id) {
-      if (confirm("Delete this entry?")) {
-        const { error } = await supabase.from('party_ledger').delete().eq('id', id);
-        if (error) alert("Error: " + error.message);
-        else loadLedger();
-      }
-    };
-
-    document.getElementById('partyFilter').addEventListener('input', loadLedger);
+    // Initial Load
+    loadKhatabook();
   </script>
 </body>
 </html>
